@@ -12,8 +12,8 @@ const (
 	ConnTypeUnknown
 )
 
-func NewConnType(str string) (ct ConnType) {
-	toConnType := map[string]ConnType{
+var (
+	toConnType = map[string]ConnType{
 		"local": ConnTypeLocal,
 		"host": ConnTypeHost,
 		"hostssl": ConnTypeHostSsl,
@@ -21,6 +21,10 @@ func NewConnType(str string) (ct ConnType) {
 		"hostgssenc": ConnTypeHostGssEnc,
 		"hostnogssenc": ConnTypeHostNoGssEnc,
 	}
+	fromConnType = map[ConnType]string{}
+)
+
+func NewConnType(str string) (ct ConnType) {
 	if ct, exists := toConnType[str]; exists {
 		return ct
 	}
@@ -35,4 +39,17 @@ func (ct ConnType) Compare(other ConnType) int {
 	} else {
 		return 0
 	}
+}
+
+func (ct ConnType) String() string {
+	if len(fromConnType) == 0 {
+		fromConnType = make(map[ConnType]string)
+		for s, ct := range toConnType {
+			fromConnType[ct] = s
+		}
+	}
+	if s, exists := fromConnType[ct]; exists {
+		return s
+	}
+	return "unknown_conn_type"
 }

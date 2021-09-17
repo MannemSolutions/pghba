@@ -15,7 +15,7 @@ var (
 	Short: "A tool to manage PostgreSQL pg_hba.conf files",
 	Long: `The pghba tool delivers admins with a tool to manage pg_hba files with a bit more sophistication.
                 Complete documentation is available at https://github.com/mannemsolutions/pghba/`,
-}
+	}
 )
 
 func Execute() {

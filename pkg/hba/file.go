@@ -1,9 +1,9 @@
 package hba
 
 import (
+  "bufio"
   "fmt"
   "os"
-  "bufio"
 )
 
 type File struct {
@@ -12,6 +12,7 @@ type File struct {
 }
 
 func NewFile(path string) (f File, err error) {
+  var commentBlock Comments
   file, err := os.Open(path)
   if err != nil {
       return f, err
@@ -19,14 +20,23 @@ func NewFile(path string) (f File, err error) {
   defer file.Close()
 
   scanner := bufio.NewScanner(file)
-  lines := make(Lines)
+  var lines Lines
   // optionally, resize scanner's capacity for lines over 64K, see next example
   for scanner.Scan() {
     line, err := parseLine(scanner.Text())
     if err != nil {
       return f, err
     }
-    lines = append(lines, line)
+    switch l := line.(type) {
+    case Comment:
+      commentBlock = append(commentBlock, l)
+    case Rule:
+      l.PrependComments(commentBlock)
+      commentBlock = Comments{}
+    case EmptyLine:
+      lines = append(lines, commentBlock, l)
+      commentBlock = Comments{}
+    }
   }
   if err := scanner.Err(); err != nil {
     return f, err

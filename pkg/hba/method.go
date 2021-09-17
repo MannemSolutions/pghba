@@ -37,6 +37,7 @@ var (
 		"sspi": MethodSspi,
 		"trust": MethodTrust,
 	}
+	fromMethod = map[Method]string{}
 )
 
 func methods() (s []string) {
@@ -53,4 +54,17 @@ func NewMethod(str string) (m Method) {
 		return m
 	}
 	return MethodUnknown
+}
+
+func (m Method) String() string {
+	if len(fromMethod) == 0 {
+		fromMethod = make(map[Method]string)
+		for s, m := range toMethod {
+			fromMethod[m] = s
+		}
+	}
+	if s, exists := fromMethod[m]; exists {
+		return s
+	}
+	return "unknown_method"
 }
