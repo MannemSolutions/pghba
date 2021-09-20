@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type AddressType int;
+type AddressType int
 
 const (
 	AddressTypeIpV4 AddressType = iota
@@ -94,11 +94,11 @@ func sizeFromNet(m net.IPMask) (uint, error) {
 		b, err := strconv.Atoi(part)
 		if err != nil {
 			// Seems like this is not an IP after all. Weird...
-			return -1, fmt.Errorf("this should not happen, but seems like netmask %s is not ipv4 (not int)", s)
+			return 0, fmt.Errorf("this should not happen, but seems like netmask %s is not ipv4 (not int)", s)
 		}
 		if b > 255 || b < 0 {
 			// Seems like this is not an IP after all. Weird...
-			return -1, fmt.Errorf("this should not happen, but seems like netmask %s is not ipv4 (not byte)", s)
+			return 0, fmt.Errorf("this should not happen, but seems like netmask %s is not ipv4 (not byte)", s)
 		}
 		zeroes += uint(8 - bits.OnesCount(uint(b)))
 	}

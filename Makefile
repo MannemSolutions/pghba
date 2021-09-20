@@ -1,7 +1,7 @@
 all: inttest
 
 build:
-	go build ./cmd/pghba
+	go build -o ./pghba  ./main
 
 debug:
 	~/go/bin/dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./cmd/pghba
