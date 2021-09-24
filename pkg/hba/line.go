@@ -11,6 +11,7 @@ type Line interface {
     Bare()        string
     Less(Line)    bool
     Compare(Line) int
+    RowNum()      uint
 }
 
 type Lines []Line
@@ -42,5 +43,9 @@ func (e EmptyLine) Less(Line)    bool {
 }
 
 func (e EmptyLine) Compare(Line) int {
+    return 0
+}
+
+func (e EmptyLine) RowNum() uint {
     return 0
 }

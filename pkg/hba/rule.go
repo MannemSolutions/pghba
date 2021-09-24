@@ -7,6 +7,7 @@ import (
 )
 
 type Rule struct {
+	rowNum uint
 	comments Comments
 	str      string
 	connType ConnType
@@ -17,7 +18,7 @@ type Rule struct {
 	options Options
 }
 
-func NewRule(connType string, database string, user string, address string, method string, options string) (Rule, error) {
+func NewRule(connType string, database string, user string, address string, mask string, method string, options string) (Rule, error) {
 	ct := NewConnType(connType)
 	mtd := NewMethod(method)
 	db := Database(database)
@@ -26,13 +27,16 @@ func NewRule(connType string, database string, user string, address string, meth
 	if err != nil {
 		return Rule{}, err
 	}
+	if mask != "" {
+		addr.SetMask(mask)
+	}
 	opts, _, err := NewOptionsFromString(options)
 	if err != nil {
 		return Rule{}, err
 	}
 
 	if ct == ConnTypeUnknown  || mtd == MethodUnknown {
-		return Rule{}, fmt.Errorf("New Rule has an invalid connection type (%s) or method (%s)", connType, method)
+		return Rule{}, fmt.Errorf("new Rule has an invalid connection type (%s) or method (%s)", connType, method)
 	}
 	return Rule{
 		connType: ct,
@@ -137,7 +141,7 @@ func NewRuleFromLine(line string) (Rule, error) {
 }
 
 func (r *Rule) PrependComments(comments Comments) {
-	// Counterintuitive, but basically we take the comments argument as a start, and append all comments
+	// Counterintuitive, but basically we take the 'comments' argument as a start, and append all comments
 	// that where already in r.comments. We store the result in r.comments...
 	r.comments = append(comments, r.comments...)
 }
@@ -194,4 +198,13 @@ func (r Rule) Comments() (com Comments) {
 
 func (r Rule) Less(l Line) (less bool) {
 	return r.Compare(l) < 0
+}
+
+func (r *Rule) SetRowNum(RowNum uint) {
+	log.Debugf("r.SetRowNum(%d)", RowNum)
+	r.SetRowNum(RowNum)
+}
+
+func (r Rule) RowNum() uint {
+	return r.rowNum
 }

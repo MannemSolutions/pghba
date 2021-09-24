@@ -4,7 +4,7 @@ build:
 	go build -o ./pghba  ./main
 
 debug:
-	~/go/bin/dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./cmd/pghba
+	dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./main -- add
 
 run:
 	./pghba

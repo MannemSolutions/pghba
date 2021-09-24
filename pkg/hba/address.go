@@ -163,13 +163,13 @@ func (a Address) String() string {
 }
 
 func (a *Address) SetMask(mask string) error {
-	// use ParseIP to find ou the bytes
-	if ! a.ip.IsUnspecified() {
-		return fmt.Errorf("cannot apply mask %s to address that is not ip %s", mask, a.str)
-	}
 	if a.aType != AddressTypeIpV4 && a.aType != AddressTypeIpV6 {
 		return fmt.Errorf("cannot set mask on something other then ipv4 or ipv6 mask")
 	}
+	if ! a.ip.IsUnspecified() {
+		return fmt.Errorf("cannot apply mask %s to address that is not ip %s", mask, a.str)
+	}
+	// use ParseIP to find ou the bytes
 	m := net.ParseIP(mask)
 	if m == nil {
 		return fmt.Errorf("%s is not a valid mask", mask)

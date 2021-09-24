@@ -10,6 +10,7 @@ type File struct {
   path string
   lines Lines
   dirty bool
+  numRules uint
 }
 
 func NewFile(path string) File {
@@ -18,10 +19,28 @@ func NewFile(path string) File {
   }
 }
 
+// Renumber all rules in the .lines sub value.
+// Not all lines are rules, and we want to number all rules consistently.
+// And know how many rules are there in the lines.
+func (f File) renumberRules() {
+  for i, line := range f.lines {
+    rule, isRule := line.(Rule)
+    if !isRule {
+      continue
+    }
+    f.numRules = uint(i)
+    rule.SetRowNum(f.numRules)
+  }
+}
+
 func (f File) Read() error {
   var commentBlock Comments
   file, err := os.Open(f.path)
   if err != nil {
+    if os.IsNotExist(err) {
+      // If the file does not exist, we will create with write. No file is no rules, so we are done here...
+      return nil
+    }
       return err
   }
   defer file.Close()
@@ -54,6 +73,7 @@ func (f File) Read() error {
     return err
   }
   f.lines = lines
+  f.renumberRules()
   return nil
 }
 
@@ -67,12 +87,56 @@ func (f *File) DeleteRule(r Rule) (found bool) {
       f.lines = append(f.lines[:i], f.lines[i+1:]...)
       found = true
       f.dirty = true
+      f.numRules -= 1
     }
+  }
+  if found {
+    f.renumberRules()
   }
   return found
 }
 
-func (f *File) Save() error {
+func (f File) InsertRule(r Rule, index int) {
+  lines := append(f.lines[:index], r)
+  f.lines = append(lines, f.lines[index:]...)
+  f.renumberRules()
+}
+
+func (f *File) AddRule(r Rule, auto bool) (found bool) {
+  if ! auto {
+    log.Debugf("Adding rule %s (manual)", r.String())
+    for i, line := range f.lines {
+      if line.RowNum() > r.RowNum() {
+        f.InsertRule(r, i)
+        f.dirty = true
+        return true
+      }
+    }
+  } else {
+    log.Debugf("Adding rule %s (auto)", r.String())
+    for i, line := range f.lines {
+      rule, isRule := line.(Rule)
+      if !isRule {
+        continue
+      }
+      if rule.Less(r) {
+        f.InsertRule(r, i)
+        f.dirty = true
+        return true
+      }
+    }
+  }
+  log.Debugf("Appending rule %s (not found).", r.String())
+  f.lines = append(f.lines, r)
+  f.renumberRules()
+  f.dirty = true
+  return false
+}
+
+func (f *File) Save(force bool) error {
+  if ! (f.dirty || force) {
+    return nil
+  }
   file, err := os.Create(f.path)
   if err != nil {
     return err

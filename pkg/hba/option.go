@@ -37,6 +37,9 @@ func NewOptionsFromString(str string) (o Options, comment Comment, err error){
   str = strings.Trim(str, " \t")
   o.kv = make(map[string]string)
   for {
+    if str == "" {
+      return o, Comment{}, nil
+    }
     k, v, str := nextOption(str)
     if k == "" || v == "" {
       return o, Comment{}, fmt.Errorf("could not read option from %s", str)
