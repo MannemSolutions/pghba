@@ -183,6 +183,9 @@ func (r Rule) Bare() string {
 }
 
 func (r Rule) String() string {
+	if r.str == "" {
+		return r.Bare()
+	}
 	var lines []string
 	comments := r.comments.String()
 	if len(comments) > 0 {
@@ -202,7 +205,7 @@ func (r Rule) Less(l Line) (less bool) {
 
 func (r *Rule) SetRowNum(RowNum uint) {
 	log.Debugf("r.SetRowNum(%d)", RowNum)
-	r.SetRowNum(RowNum)
+	r.rowNum = RowNum
 }
 
 func (r Rule) RowNum() uint {

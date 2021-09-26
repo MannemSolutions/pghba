@@ -28,7 +28,7 @@ func (f File) renumberRules() {
     if !isRule {
       continue
     }
-    f.numRules = uint(i)
+    f.numRules = uint(i+1)
     rule.SetRowNum(f.numRules)
   }
 }

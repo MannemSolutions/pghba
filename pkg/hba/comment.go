@@ -47,6 +47,10 @@ func (c Comment) Compare(Line) int {
 	return -1
 }
 
+func (c Comment) RowNum() uint {
+	return 0
+}
+
 type Comments []Comment;
 
 func (cb Comments) String() string {
@@ -76,4 +80,8 @@ func (cb Comments) Less(l Line) (less bool) {
 
 func (cb Comments) Compare(Line) int {
 	return -1
+}
+
+func (cb Comments) RowNum() uint {
+	return 0
 }
