@@ -10,14 +10,16 @@ type array struct {
 	list []string
 	suffix string
 	index int
+	subIterator ALC
 }
 
-func NewAlcArray(prefix string, comprehension string, suffix string) (a array, err error) {
-	if ! (strings.HasPrefix(comprehension, "{") && strings.HasSuffix(comprehension, "}")) {
-		return a, fmt.Errorf("missing curly braces around array comprehension '%s'", comprehension)
+func newAlcArray(s string) (a *array, err error) {
+	prefix, comprehension, suffix, err := parts(s, "(")
+	if err != nil {
+		return nil, err
 	}
 	comprehension = comprehension[1:len(comprehension)-1]
-	return array{
+	return &array{
 		prefix: prefix,
 		list: strings.Split(comprehension, ","),
 		suffix: suffix,
@@ -25,11 +27,40 @@ func NewAlcArray(prefix string, comprehension string, suffix string) (a array, e
 	}, nil
 }
 
-func (a array) Next() (next string, done bool) {
+func (a *array) Next() (next string, done bool) {
+	if a.subIterator != nil {
+		next, done := a.subIterator.Next()
+		if done {
+			a.subIterator = nil
+		} else {
+			return next, false
+		}
+	}
 	if a.index >= len(a.list) {
 		return "", true
 	}
 	next = fmt.Sprintf("%s%s%s", a.prefix, a.list[a.index], a.suffix)
 	a.index += 1
+	if a.subIterator != nil {
+		// Let s call the method again, just to let the top part handle this
+		return a.Next()
+	}
 	return next, false
+}
+
+func (a array) String() (s string) {
+	return fmt.Sprintf("%s(%s)%s", a.prefix, strings.Join(a.list, "|"), a.suffix)
+}
+
+func (a *array) Reset() {
+	a.index = 0
+}
+
+func (a array) ToArray() (array) {
+	return array{
+		prefix: a.prefix,
+		suffix: a.suffix,
+		index: a.index,
+		list: a.list,
+	}
 }

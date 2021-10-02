@@ -6,56 +6,96 @@ import (
 	"strings"
 )
 
-type charlist struct {
+type charList struct {
 	prefix string
 	list []byte
 	suffix string
 	index int
+	subIterator ALC
 }
 
-func NewAlcCharList(prefix string, comprehension string, suffix string) (cl charlist, err error) {
-	if ! (strings.HasPrefix(comprehension, "[") && strings.HasSuffix(comprehension, "]")) {
-		return charlist{}, fmt.Errorf("missing round braces around array comprehension")
+func newAlcCharList(s string) (cl *charList, err error) {
+	prefix, comprehension, suffix, err := parts(s, "[")
+	if err != nil {
+		return nil, err
 	}
-	cl = charlist{
+	if strings.HasPrefix(comprehension, "^") {
+		return nil, fmt.Errorf("cannot make an iterator of a negative character list (starting with ^)")
+	}
+	cl = &charList{
 		prefix: prefix,
 		suffix: suffix,
 		index: 0,
 	}
-	charDefinition := comprehension[1:len(comprehension)-1]
-	if strings.HasSuffix(charDefinition, "-" ) {
+	if strings.HasSuffix(comprehension, "-" ) {
 		cl.list = []byte("-")
 	}
-	if strings.HasPrefix(charDefinition, "-" ) {
+	if strings.HasPrefix(comprehension, "-" ) {
 		cl.list = []byte("-")
 	}
 	re := regexp.MustCompile(`(-)?([^-]|([^-][-][^-]))*(-)?`)
-	matches := re.FindAllIndex([]byte(charDefinition), -1)
+	matches := re.FindAllIndex([]byte(comprehension), -1)
 	if matches == nil {
-		return charlist{}, fmt.Errorf("could not parse charlist %s", charDefinition)
+		return &charList{}, fmt.Errorf("could not parse charList %s", comprehension)
 	}
 	for _, match := range matches {
-		start := charDefinition[match[0]]
+		start := comprehension[match[0]]
 		if match[1] - match[0] == 1 {
 			cl.list = append(cl.list, start)
 		} else if match[1] - match[0] == 3 {
-			end := charDefinition[match[0]]
+			end := comprehension[match[0]]
 			for c:= start; c <= end; c++ {
 				cl.list = append(cl.list, c)
 			}
 		} else {
-			return charlist{}, fmt.Errorf("could not parse the %s part of %s", charDefinition[match[0]:match[1]],
+			return &charList{}, fmt.Errorf("could not parse the %s part of %s", comprehension[match[0]:match[1]],
 				comprehension)
 		}
 	}
 	return cl, nil
 }
 
-func (cl charlist) Next() (next string, done bool) {
+func (cl *charList) Next() (next string, done bool) {
+	if cl.subIterator != nil {
+		next, done := cl.subIterator.Next()
+		if done {
+			cl.subIterator = nil
+		} else {
+			return next, false
+		}
+	}
 	if cl.index >= len(cl.list) {
 		return "", true
 	}
 	next = fmt.Sprintf("%s%s%s", cl.prefix, string(cl.list[cl.index]), cl.suffix)
 	cl.index += 1
+	if cl.subIterator != nil {
+		// Let s call the method again, just to let the top part handle this
+		return cl.Next()
+	}
 	return next, false
+}
+
+func (cl *charList) Reset() {
+	cl.index = 0
+}
+
+func (cl *charList) ToArray() (a array) {
+	a = array{
+		prefix: cl.prefix,
+		suffix: cl.suffix,
+		index: cl.index,
+	}
+	for {
+		next, done := cl.Next()
+		if done {
+			break
+		}
+		a.list = append(a.list, next)
+	}
+	return a
+}
+
+func (cl *charList) String() (s string) {
+	return fmt.Sprintf("%s[%s]%s", cl.prefix, string(cl.list), cl.suffix)
 }

@@ -6,13 +6,44 @@ import (
 	"strings"
 )
 
-var (
-	partsIsDone = fmt.Errorf("no more parts to split")
+type groupChar string
+
+const (
+	squareStart groupChar = "["
+	roundStart groupChar = "("
+	curlyStart groupChar = "{"
+	squareEnd groupChar = "]"
+	roundEnd groupChar = ")"
+	curlyEnd groupChar = "}"
 )
 
-func parts (s string) (prefix string, comprehension string, postfix string, err error) {
+type groupChars map[groupChar]groupChar
+
+func (g groupChars) AllEndChars() string {
+	var all []string
+	for _, end := range g {
+		all = append(all, string(end))
+	}
+	return strings.Join(all, "")
+}
+
+var (
+	partsIsDone = fmt.Errorf("no more parts to split")
+	groupStartToEnd = groupChars{
+		curlyStart: curlyEnd,
+		roundStart: roundEnd,
+		squareStart: squareEnd,
+	}
+)
+
+func parts (s string, groupStart groupChar) (prefix string, comprehension string, postfix string, err error) {
 	var exists bool
-	re := regexp.MustCompile(`(?P<prefix>.*)(?P<comprehension>[[(][^])]*[])])(?P<postfix>.*)`)
+	groupEnd, exists := groupStartToEnd[groupStart]
+	if ! exists {
+		return "","", "", fmt.Errorf("invalid group start")
+	}
+	re := regexp.MustCompile(fmt.Sprintf(`(?P<prefix>.*)(?P<comprehension>\%s[^%s]*\%s)(?P<postfix>.*)`,
+		groupStart, groupEnd, groupEnd))
 	matches := re.FindStringSubmatch(s)
 	if matches == nil {
 		err = partsIsDone
@@ -37,23 +68,26 @@ func parts (s string) (prefix string, comprehension string, postfix string, err 
 		err = fmt.Errorf("there is no postfix")
 		return
 	}
+	comprehension = comprehension[1:len(comprehension)-1]
 	return
 }
 
 type ALC interface {
 	Next()      (string, bool)
+	ToArray()   (a array)
+	Reset()
+	String()    (s string)
 }
 
-func NewALC (s string) (alc ALC, err error){
-	prefix, comprehension, suffix, err := parts(s)
-	if err != nil {
-		return nil, err
+func NewALC (s string) (alc ALC){
+	if cl, err := newAlcCharList(s); err == nil {
+		return cl
 	}
-	if strings.HasPrefix(comprehension, "[") {
-		return NewAlcCharList(prefix, comprehension, suffix)
+	if l, err := newAlcLoop(s); err == nil {
+		return l
 	}
-	if strings.Contains(comprehension, "..") {
-		return NewAlcLoop(prefix, comprehension, suffix)
+	if a, err := newAlcArray(s); err == nil {
+		return a
 	}
-	return NewAlcArray(prefix, comprehension, suffix)
+	return nil
 }
