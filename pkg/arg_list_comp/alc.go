@@ -19,12 +19,22 @@ const (
 
 type groupChars map[groupChar]groupChar
 
-func (g groupChars) AllEndChars() string {
-	var all []string
+func (g groupChars) allChars() []string {
+	return append(g.allStartChars(), g.allEndChars()...)
+}
+
+func (g groupChars) allEndChars() (all []string) {
 	for _, end := range g {
 		all = append(all, string(end))
 	}
-	return strings.Join(all, "")
+	return all
+}
+
+func (g groupChars) allStartChars() (all []string) {
+	for start := range g {
+		all = append(all, string(start))
+	}
+	return all
 }
 
 var (
@@ -42,8 +52,8 @@ func parts (s string, groupStart groupChar) (prefix string, comprehension string
 	if ! exists {
 		return "","", "", fmt.Errorf("invalid group start")
 	}
-	re := regexp.MustCompile(fmt.Sprintf(`(?P<prefix>.*)(?P<comprehension>\%s[^%s]*\%s)(?P<postfix>.*)`,
-		groupStart, groupEnd, groupEnd))
+	re := regexp.MustCompile(fmt.Sprintf(`(?P<prefix>.*)(?P<comprehension>\%s[^\%s]*\%s)(?P<postfix>.*)`,
+		groupStart, strings.Join(groupStartToEnd.allChars(),"\\"), groupEnd))
 	matches := re.FindStringSubmatch(s)
 	if matches == nil {
 		err = partsIsDone
@@ -83,11 +93,14 @@ func NewALC (s string) (alc ALC){
 	if cl, err := newAlcCharList(s); err == nil {
 		return cl
 	}
+	if a, err := newAlcArray(s); err == nil {
+		return a
+	}
 	if l, err := newAlcLoop(s); err == nil {
 		return l
 	}
-	if a, err := newAlcArray(s); err == nil {
-		return a
+	if l, err := newAlcCharLoop(s); err == nil {
+		return l
 	}
 	return nil
 }

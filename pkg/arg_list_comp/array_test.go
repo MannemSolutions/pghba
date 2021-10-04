@@ -13,7 +13,7 @@ func TestALCArray(t *testing.T) {
 	myAlc := "test(ing||user|er)"
 	myFuncName := "NewALC(\"test(ing||user|er)\")"
 	myArray := arg_list_comp.NewALC(myAlc)
-	if assert.NotNil(t, myArray, "%s should return an array iterator", myFuncName) {
+	if ! assert.NotNil(t, myArray, "%s should return an array iterator", myFuncName) {
 		return
 	}
 	for {

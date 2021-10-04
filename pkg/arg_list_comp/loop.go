@@ -31,12 +31,13 @@ func newAlcLoop(s string) (l *loop, err error) {
 	}
 	l.begin, err = strconv.Atoi(csplit[0])
 	if err != nil {
-		return nil, fmt.Errorf("invalid format for array comprehension (first part should be integer, but is %s). %e", csplit[0], err)
+		return nil, fmt.Errorf("invalid format for array comprehension, first part (%s) should be an integer: %e", csplit[0], err)
 	}
+
 	l.index = l.begin
 	l.end, err = strconv.Atoi(csplit[1])
 	if err != nil {
-		return nil, fmt.Errorf("invalid format for array comprehension (second part should be integer, but is %s). %e", csplit[1], err)
+		return nil, fmt.Errorf("invalid format for array comprehension, second part (%s) should be an integer: %e", csplit[1], err)
 	}
 	return l, nil
 }
@@ -71,7 +72,7 @@ func (l loop) ToArray() (a array) {
 	a = array{
 		prefix: l.prefix,
 		suffix: l.suffix,
-		index: l.index,
+		index: l.index-l.begin,
 	}
 	for i:=l.begin;i<=l.end;i++ {
 		a.list = append(a.list, fmt.Sprintf("%d", i))

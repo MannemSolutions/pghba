@@ -18,10 +18,9 @@ func newAlcArray(s string) (a *array, err error) {
 	if err != nil {
 		return nil, err
 	}
-	comprehension = comprehension[1:len(comprehension)-1]
 	return &array{
 		prefix: prefix,
-		list: strings.Split(comprehension, ","),
+		list: strings.Split(comprehension, "|"),
 		suffix: suffix,
 		index: 0,
 	}, nil

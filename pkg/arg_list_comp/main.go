@@ -12,6 +12,7 @@ There are some examples, like:
 * bash glob lists, e.a.:
   * 'item{1,2,3}' would be converted in ['item1','item2','item3']
   * 'item{99..101}' would be converted in ['item99','item100','item101']
+  * 'item_{a..z}' would be converted in ['item_a','item_b','item_c']
   * '{item,part}{7..9}' would be converted in ['item7','item8','part7','part8']
 
 After deep consideration, bash glob has been decided to be the basis.
