@@ -12,12 +12,13 @@ run:
 fmt:
 	gofmt -w .
 
-test: sec lint
+test: unittest sec lint
 
 sec:
 	gosec ./...
+
 lint:
 	golangci-lint run
 
-inttest:
-	./docker-compose-tests.sh
+unittest:
+	find . -name '*_test.go' | while read f; do dirname $$f; done | sort -u | while read d; do go test $$d; done
