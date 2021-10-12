@@ -40,6 +40,7 @@ func (a *array) Next() (next string, done bool) {
 	}
 	next = fmt.Sprintf("%s%s%s", a.prefix, a.list[a.index], a.suffix)
 	a.index += 1
+	a.subIterator = NewALC(next)
 	if a.subIterator != nil {
 		// Let s call the method again, just to let the top part handle this
 		return a.Next()

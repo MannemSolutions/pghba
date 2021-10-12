@@ -11,8 +11,8 @@ func TestAlcCharList(t *testing.T) {
 	var next string
 	var results []string
 	var done bool
-	myAlc := "test[abc]"
-	myArrayAlc := "test(a|b|c)"
+	myAlc := "test_[abc]"
+	myArrayAlc := "test_(a|b|c)"
 	myFuncName := fmt.Sprintf("NewALC(\"%s\")", myAlc)
 	myLoop := arg_list_comp.NewALC(myAlc)
 	if ! assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
@@ -29,6 +29,6 @@ func TestAlcCharList(t *testing.T) {
 		results = append(results, next)
 	}
 	assert.Len(t, results, 3, "%s should return 3 elements", myFuncName)
-	assert.Contains(t, results, "test1", "%s should return \"test1\"", myFuncName)
-	assert.Contains(t, results, "test3", "%s should return \"test3\"", myFuncName)
+	assert.Contains(t, results, "test_a", "%s should return \"test_a\"", myFuncName)
+	assert.Contains(t, results, "test_c", "%s should return \"test_c\"", myFuncName)
 }

@@ -23,7 +23,7 @@ func TestALCArray(t *testing.T) {
 		}
 		results = append(results, next)
 	}
-	assert.Len(t, results, 2, "%s should return 4 elements", myFuncName)
+	assert.Len(t, results, 4, "%s should return 4 elements", myFuncName)
 	assert.Contains(t, results, "test", "%s should return \"test\"", myFuncName)
 	assert.Contains(t, results, "testing", "%s should return \"testing\"", myFuncName)
 }

@@ -10,14 +10,15 @@ func TestALCLoopSub(t *testing.T) {
 	var next string
 	var results []string
 	var done bool
-	myAlc := "test(ing|{1..3})"
-	myFuncName := fmt.Sprintf("NewALC(\"%s\")", myAlc)
-	myLoop := NewALC(myAlc)
-	assert.NotNil(t, myLoop, "%s should return an iterator", myFuncName)
-	assert.Equal(t, myAlc, myLoop.String(), "%s.String() should be \"%s\"", myFuncName, myAlc)
+	myAlcDef := "test(ing|{1..3})"
+	myFuncName := fmt.Sprintf("NewALC(\"%s\")", myAlcDef)
+	myAlc := NewALC(myAlcDef)
+	assert.NotNil(t, myAlc, "%s should return an iterator", myFuncName)
+	assert.Equal(t, myAlcDef, myAlc.String(), "%s.String() should be \"%s\"", myFuncName, myAlcDef)
+	mySortedArray := SortedArray(myAlc)
 
 	for {
-		next, done = myLoop.Next()
+		next, done = mySortedArray.Next()
 		if done {
 			break
 		}

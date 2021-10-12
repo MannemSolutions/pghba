@@ -43,7 +43,7 @@ func newAlcCharList(s string) (cl *charList, err error) {
 		if match[1] - match[0] == 1 {
 			cl.list = append(cl.list, start)
 		} else if match[1] - match[0] == 3 {
-			end := comprehension[match[0]]
+			end := comprehension[match[0]+match[1]-1]
 			for c:= start; c <= end; c++ {
 				cl.list = append(cl.list, c)
 			}
@@ -69,6 +69,7 @@ func (cl *charList) Next() (next string, done bool) {
 	}
 	next = fmt.Sprintf("%s%s%s", cl.prefix, string(cl.list[cl.index]), cl.suffix)
 	cl.index += 1
+	cl.subIterator = NewALC(next)
 	if cl.subIterator != nil {
 		// Let s call the method again, just to let the top part handle this
 		return cl.Next()
@@ -86,12 +87,8 @@ func (cl *charList) ToArray() (a array) {
 		suffix: cl.suffix,
 		index: cl.index,
 	}
-	for {
-		next, done := cl.Next()
-		if done {
-			break
-		}
-		a.list = append(a.list, next)
+	for i:=0;i<len(cl.list); i++ {
+		a.list = append(a.list, string([]byte{cl.list[i]}))
 	}
 	return a
 }

@@ -3,6 +3,7 @@ package arg_list_comp
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -104,3 +105,28 @@ func NewALC (s string) (alc ALC){
 	}
 	return nil
 }
+
+// Sorted creates an array with sorted unique elements
+func SortedArray(alc ALC) (sorted array) {
+	// Clone so we can reset
+	a := alc.ToArray()
+	a.Reset()
+	//Make unique
+	unique := make(map[string]bool)
+	for {
+		next, done := a.Next()
+		if done {
+			break
+		}
+		unique[next] = true
+	}
+	// Build sorted
+	sorted = array{}
+	for next, _ := range unique {
+		sorted.list = append(sorted.list, next)
+	}
+	sort.Strings(sorted.list)
+
+	return sorted
+}
+
