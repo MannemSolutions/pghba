@@ -40,14 +40,14 @@ var (
 	fromMethod = map[Method]string{}
 )
 
-func methods() (s []string) {
-	i := 0;
-	keys := make ([]string, 0, len(toMethod))
-	for key := range toMethod {
-		keys[i] = key
-	}
-	return keys
-}
+//func methods() (s []string) {
+//	i := 0;
+//	keys := make ([]string, 0, len(toMethod))
+//	for key := range toMethod {
+//		keys[i] = key
+//	}
+//	return keys
+//}
 
 func NewMethod(str string) (m Method) {
 	if m, exists := toMethod[str]; exists {

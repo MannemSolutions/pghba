@@ -122,7 +122,7 @@ func SortedArray(alc ALC) (sorted array) {
 	}
 	// Build sorted
 	sorted = array{}
-	for next, _ := range unique {
+	for next := range unique {
 		sorted.list = append(sorted.list, next)
 	}
 	sort.Strings(sorted.list)

@@ -28,7 +28,10 @@ func NewRule(connType string, database string, user string, address string, mask
 		return Rule{}, err
 	}
 	if mask != "" {
-		addr.SetMask(mask)
+		err = addr.SetMask(mask)
+		if err != nil {
+			return Rule{}, err
+		}
 	}
 	opts, _, err := NewOptionsFromString(options)
 	if err != nil {
@@ -179,7 +182,8 @@ func (r Rule) Bare() string {
 	if r.options.Len() > 0 {
 		parts = append(parts, r.options.Bare())
 	}
-	return strings.Join(parts, "\t")
+	lines = append(lines, strings.Join(parts, "\t"))
+	return strings.Join(lines, "\n")
 }
 
 func (r Rule) String() string {

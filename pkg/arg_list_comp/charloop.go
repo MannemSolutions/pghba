@@ -75,7 +75,7 @@ func (l charLoop) ToArray() (a array) {
 		index: int(l.index-l.begin),
 	}
 	for c:=l.begin;c<=l.end;c++ {
-		a.list = append(a.list, fmt.Sprintf("%s", string(c)))
+		a.list = append(a.list, string(c))
 	}
 	return a
 }

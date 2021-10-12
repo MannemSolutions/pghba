@@ -43,9 +43,11 @@ func (f File) Read() error {
     }
       return err
   }
-  defer file.Close()
-
   scanner := bufio.NewScanner(file)
+  err = file.Close()
+  if err != nil {
+    return err
+  }
   var lines Lines
   // optionally, resize scanner's capacity for lines over 64K, see next example
   for scanner.Scan() {
@@ -141,14 +143,18 @@ func (f *File) Save(force bool) error {
   if err != nil {
     return err
   }
-  defer file.Close()
   for _, line := range f.lines {
     _, err := file.WriteString(line.String() + "\n")
     if err != nil {
+      _ = file.Close()
       return err
     }
   }
   err = file.Sync()
+  if err != nil {
+    return err
+  }
+  err = file.Close()
   if err != nil {
     return err
   }
