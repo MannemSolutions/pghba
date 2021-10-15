@@ -15,7 +15,7 @@ type charLoop struct {
 }
 
 func newAlcCharLoop(s string) (l *charLoop, err error) {
-	prefix, comprehension, suffix, err := parts(s, "{")
+	prefix, comprehension, suffix, err := groupChar("{").Parts(s)
 	if err != nil {
 		return nil, err
 	}

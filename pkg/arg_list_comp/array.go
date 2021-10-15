@@ -14,7 +14,7 @@ type array struct {
 }
 
 func newAlcArray(s string) (a *array, err error) {
-	prefix, comprehension, suffix, err := parts(s, "(")
+	prefix, comprehension, suffix, err := groupChar("(").Parts(s)
 	if err != nil {
 		return nil, err
 	}
