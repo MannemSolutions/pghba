@@ -2,12 +2,11 @@ package hba
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
 type Rule struct {
-	rowNum uint
+	rowNum int
 	comments Comments
 	str      string
 	connType ConnType
@@ -18,7 +17,7 @@ type Rule struct {
 	options Options
 }
 
-func NewRule(connType string, database string, user string, address string, mask string, method string, options string) (Rule, error) {
+func NewRule(rowNum int, connType string, database string, user string, address string, mask string, method string, options string) (Rule, error) {
 	ct := NewConnType(connType)
 	mtd := NewMethod(method)
 	db := Database(database)
@@ -42,6 +41,7 @@ func NewRule(connType string, database string, user string, address string, mask
 		return Rule{}, fmt.Errorf("new Rule has an invalid connection type (%s) or method (%s)", connType, method)
 	}
 	return Rule{
+		rowNum: rowNum,
 		connType: ct,
 		method: mtd,
 		database: db,
@@ -50,37 +50,6 @@ func NewRule(connType string, database string, user string, address string, mask
 		options: opts,
 	}, nil
 }
-
-type splitter struct {
-	rest string
-}
-
-func newSplitter(str string) splitter{
-	return splitter{rest: str}
-}
-
-func (s *splitter) Next() (string, error) {
-	re := regexp.MustCompile(`^\S*(?P<part>([^"]+|"[^"]*"))\S+(?P<rest>.*)$`)
-	matches := re.FindStringSubmatch(s.rest)
-	if matches == nil {
-		return "", fmt.Errorf("could not find next part in %s", s.rest)
-	}
-	fields := make(map[string]string)
-	for id, name := range re.SubexpNames() {
-		fields[name] = matches[id]
-	}
-	part, exists := fields["part"]
-	if ! exists {
-		return "", fmt.Errorf("next part seems empty in %s", s.rest)
-	}
-	s.rest = fields["rest"]
-	return part, nil
-}
-
-func (s splitter) Rest() string {
-	return s.rest
-}
-
 func NewRuleFromLine(line string) (Rule, error) {
 	var address, db string
 	var r Rule
@@ -207,11 +176,24 @@ func (r Rule) Less(l Line) (less bool) {
 	return r.Compare(l) < 0
 }
 
-func (r *Rule) SetRowNum(RowNum uint) {
-	log.Debugf("r.SetRowNum(%d)", RowNum)
-	r.rowNum = RowNum
+func (r *Rule) SetRowNum(rowNum int) {
+	r.rowNum = rowNum
 }
 
-func (r Rule) RowNum() uint {
+func (r Rule) RowNum() int {
 	return r.rowNum
 }
+
+func (r Rule) Clone() Rule {
+ 	return Rule{
+ 		rowNum: r.rowNum,
+ 		comments: r.comments,
+ 		str: r.str,
+ 		connType: r.connType,
+ 		database: r.database,
+ 		user: r.user,
+ 		address: r.address.Clone(),
+ 		method: r.method,
+ 		options: r.options,
+	}
+ }

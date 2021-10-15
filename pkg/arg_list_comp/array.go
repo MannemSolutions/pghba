@@ -11,6 +11,7 @@ type array struct {
 	suffix string
 	index int
 	subIterator ALC
+	current string
 }
 
 func newAlcArray(s string) (a *array, err error) {
@@ -26,17 +27,23 @@ func newAlcArray(s string) (a *array, err error) {
 	}, nil
 }
 
+func (a array) Current() string {
+	return a.current
+}
+
 func (a *array) Next() (next string, done bool) {
 	if a.subIterator != nil {
 		next, done := a.subIterator.Next()
 		if done {
 			a.subIterator = nil
 		} else {
-			return next, false
+			a.current = next
+			return a.current, false
 		}
 	}
 	if a.index >= len(a.list) {
-		return "", true
+		a.current = ""
+		return a.current, true
 	}
 	next = fmt.Sprintf("%s%s%s", a.prefix, a.list[a.index], a.suffix)
 	a.index += 1
@@ -53,6 +60,7 @@ func (a array) String() (s string) {
 }
 
 func (a *array) Reset() {
+	a.current = ""
 	a.index = 0
 }
 

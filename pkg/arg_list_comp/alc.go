@@ -5,6 +5,7 @@ import (
 )
 
 type ALC interface {
+	Current() string
 	Next()      (string, bool)
 	ToArray()   (a array)
 	Reset()

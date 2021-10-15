@@ -12,6 +12,7 @@ type charLoop struct {
 	end byte
 	suffix string
 	subIterator ALC
+	current string
 }
 
 func newAlcCharLoop(s string) (l *charLoop, err error) {
@@ -42,39 +43,45 @@ func newAlcCharLoop(s string) (l *charLoop, err error) {
 	return l, nil
 }
 
-func (l *charLoop) Next() (next string, done bool) {
-	if l.subIterator != nil {
-		next, done := l.subIterator.Next()
+func (cl charLoop) Current() string {
+	return cl.current
+}
+
+func (cl *charLoop) Next() (next string, done bool) {
+	if cl.subIterator != nil {
+		next, done := cl.subIterator.Next()
 		if done {
-			l.subIterator = nil
+			cl.subIterator = nil
 		} else {
-			return next, false
+			cl.current = next
+			return cl.current, false
 		}
 	}
-	if l.index > l.end {
-		return "", true
+	if cl.index > cl.end {
+		cl.current = ""
+		return cl.current, true
 	}
-	next = fmt.Sprintf("%s%s%s", l.prefix, string(l.index), l.suffix)
-	l.index += 1
-	l.subIterator = NewALC(next)
-	if l.subIterator != nil {
+	next = fmt.Sprintf("%s%s%s", cl.prefix, string(cl.index), cl.suffix)
+	cl.index += 1
+	cl.subIterator = NewALC(next)
+	if cl.subIterator != nil {
 		// Let s call the method again, just to let the top part handle this
-		return l.Next()
+		return cl.Next()
 	}
 	return next, false
 }
 
-func (l *charLoop) Reset() {
-	l.index = l.begin
+func (cl *charLoop) Reset() {
+	cl.index = cl.begin
 }
 
-func (l charLoop) ToArray() (a array) {
+func (cl charLoop) ToArray() (a array) {
 	a = array{
-		prefix: l.prefix,
-		suffix: l.suffix,
-		index: int(l.index-l.begin),
+		prefix: cl.prefix,
+		suffix: cl.suffix,
+		index:  int(cl.index- cl.begin),
 	}
-	for c:=l.begin;c<=l.end;c++ {
+	for c:= cl.begin;c<= cl.end;c++ {
 		a.list = append(a.list, string(c))
 	}
 	return a

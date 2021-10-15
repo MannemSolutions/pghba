@@ -38,7 +38,7 @@ func (c Comment) Bare() (s string) {
 	return fmt.Sprintf("# %s", c.bare)
 }
 
-func (c Comment) Less(l Line) (less bool) {
+func (c Comment) Less(_ Line) (less bool) {
   // We do not sort comments
   return false
 }
@@ -47,7 +47,7 @@ func (c Comment) Compare(Line) int {
 	return -1
 }
 
-func (c Comment) RowNum() uint {
+func (c Comment) RowNum() int {
 	return 0
 }
 
@@ -73,7 +73,7 @@ func (cb Comments) Bare() (bare string) {
 	return strings.Join(bareList, "\n")
 }
 
-func (cb Comments) Less(l Line) (less bool) {
+func (cb Comments) Less(_ Line) (less bool) {
 	// We do not sort comments
 	return false
 }
@@ -82,6 +82,6 @@ func (cb Comments) Compare(Line) int {
 	return -1
 }
 
-func (cb Comments) RowNum() uint {
+func (cb Comments) RowNum() int {
 	return 0
 }

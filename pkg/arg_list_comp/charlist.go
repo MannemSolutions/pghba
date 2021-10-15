@@ -12,6 +12,7 @@ type charList struct {
 	suffix string
 	index int
 	subIterator ALC
+	current string
 }
 
 func newAlcCharList(s string) (cl *charList, err error) {
@@ -55,17 +56,23 @@ func newAlcCharList(s string) (cl *charList, err error) {
 	return cl, nil
 }
 
+func (cl charList) Current() string {
+	return cl.current
+}
+
 func (cl *charList) Next() (next string, done bool) {
 	if cl.subIterator != nil {
 		next, done := cl.subIterator.Next()
 		if done {
 			cl.subIterator = nil
 		} else {
-			return next, false
+			cl.current = next
+			return cl.current, false
 		}
 	}
 	if cl.index >= len(cl.list) {
-		return "", true
+		cl.current = ""
+		return cl.current, true
 	}
 	next = fmt.Sprintf("%s%s%s", cl.prefix, string(cl.list[cl.index]), cl.suffix)
 	cl.index += 1
@@ -78,6 +85,7 @@ func (cl *charList) Next() (next string, done bool) {
 }
 
 func (cl *charList) Reset() {
+	cl.current = ""
 	cl.index = 0
 }
 

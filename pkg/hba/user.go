@@ -3,7 +3,6 @@ package hba
 import "strings"
 
 type User string
-type Users []User
 
 func (u User) Compare(other User) int {
 	if u == other {

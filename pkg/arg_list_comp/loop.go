@@ -13,6 +13,7 @@ type loop struct {
 	end int
 	suffix string
 	subIterator ALC
+	current string
 }
 
 func newAlcLoop(s string) (l *loop, err error) {
@@ -42,17 +43,23 @@ func newAlcLoop(s string) (l *loop, err error) {
 	return l, nil
 }
 
+func (l loop) Current() string {
+	return l.current
+}
+
 func (l *loop) Next() (next string, done bool) {
 	if l.subIterator != nil {
 		next, done := l.subIterator.Next()
 		if done {
 			l.subIterator = nil
 		} else {
-			return next, false
+			l.current = next
+			return l.current, false
 		}
 	}
 	if l.index > l.end {
-		return "", true
+		l.current = ""
+		return l.current, true
 	}
 	next = fmt.Sprintf("%s%d%s", l.prefix, l.index, l.suffix)
 	l.index += 1

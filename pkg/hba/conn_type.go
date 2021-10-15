@@ -1,7 +1,6 @@
 package hba
 
 type ConnType int
-type ConnTypes []ConnType
 
 const (
 	ConnTypeLocal ConnType = iota

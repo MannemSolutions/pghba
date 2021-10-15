@@ -9,7 +9,6 @@ import (
 )
 
 type AddressType int
-type Addresses []Address
 
 const (
 	AddressTypeIpV4 AddressType = iota
@@ -180,4 +179,17 @@ func (a *Address) SetMask(mask string) error {
 		return fmt.Errorf("ip %s and mask %s are not same version (one is ipv4 and other is ipv6)", a.ip.String(), mask)
 	}
 	return nil
+}
+
+func (a Address) Unset() bool {
+	return a.aType == AddressTypeUnknown
+}
+
+func (a Address) Clone() Address {
+	return Address{
+		ip: a.ip,
+		ipNet: a.ipNet,
+		str: a.str,
+		aType: a.aType,
+	}
 }

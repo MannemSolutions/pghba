@@ -10,7 +10,7 @@ type File struct {
   path string
   lines Lines
   dirty bool
-  numRules uint
+  numRules int
 }
 
 func NewFile(path string) File {
@@ -28,7 +28,7 @@ func (f File) renumberRules() {
     if !isRule {
       continue
     }
-    f.numRules = uint(i+1)
+    f.numRules = i+1
     rule.SetRowNum(f.numRules)
   }
 }
@@ -98,6 +98,19 @@ func (f *File) DeleteRule(r Rule) (found bool) {
   return found
 }
 
+func (f *File) DeleteRules(rs Rules) (found bool, err error) {
+  for {
+    next, done, err := rs.Next()
+    if done {
+      return found, nil
+    }
+    if err != nil {
+      return found, err
+    }
+    found = found || f.DeleteRule(next)
+  }
+}
+
 func (f File) InsertRule(r Rule, index int) {
   lines := append(f.lines[:index], r)
   f.lines = append(lines, f.lines[index:]...)
@@ -133,6 +146,19 @@ func (f *File) AddRule(r Rule, auto bool) (found bool) {
   f.renumberRules()
   f.dirty = true
   return false
+}
+
+func (f *File) AddRules(rs Rules, auto bool) (found bool, err error) {
+  for {
+    next, done, err := rs.Next()
+    if done {
+      return found, nil
+    }
+    if err != nil {
+      return found, err
+    }
+    found = found || f.AddRule(next, auto)
+  }
 }
 
 func (f *File) Save(force bool) error {
