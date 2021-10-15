@@ -97,8 +97,8 @@ func (cl *charList) String() (s string) {
 	return fmt.Sprintf("%s[%s]%s", cl.prefix, string(cl.list), cl.suffix)
 }
 
-func (cl charList) ToSortedArray() array {
-	return alcToSortedArray(&cl)
+func (cl charList) Unique() ALC {
+	return uniqueAlc(&cl)
 }
 func (cl charList) ToList() []string {
 	return alcToList(&cl)

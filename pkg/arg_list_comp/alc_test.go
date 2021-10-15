@@ -15,7 +15,7 @@ func TestALCLoopSub(t *testing.T) {
 	myAlc := NewALC(myAlcDef)
 	assert.NotNil(t, myAlc, "%s should return an iterator", myFuncName)
 	assert.Equal(t, myAlcDef, myAlc.String(), "%s.String() should be \"%s\"", myFuncName, myAlcDef)
-	mySortedArray := myAlc.ToSortedArray()
+	mySortedArray := myAlc.Unique()
 
 	for {
 		next, done = mySortedArray.Next()

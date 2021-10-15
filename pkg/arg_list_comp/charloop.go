@@ -84,8 +84,8 @@ func (cl charLoop) String() (s string) {
 	return fmt.Sprintf("%s{%s..%s}%s", cl.prefix, string(cl.begin), string(cl.end), cl.suffix)
 }
 
-func (cl charLoop) ToSortedArray() array {
-	return alcToSortedArray(&cl)
+func (cl charLoop) Unique() ALC {
+	return uniqueAlc(&cl)
 }
 
 func (cl charLoop) ToList() []string {

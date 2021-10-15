@@ -9,7 +9,7 @@ type ALC interface {
 	ToArray()   (a array)
 	Reset()
 	String()    (s string)
-	ToSortedArray() array
+	Unique() ALC
 	ToList() []string
 }
 
@@ -29,8 +29,8 @@ func NewALC (s string) (alc ALC){
 	return nil
 }
 
-// SortedArray creates an array with sorted unique elements
-func alcToSortedArray(alc ALC) (sorted array) {
+// uniqueAlc creates an array with sorted unique elements
+func uniqueAlc(alc ALC) (ALC) {
 	// Clone so we can reset
 	a := alc.ToArray()
 	a.Reset()
@@ -44,7 +44,8 @@ func alcToSortedArray(alc ALC) (sorted array) {
 		unique[next] = true
 	}
 	// Build sorted
-	sorted = array{}
+	var sorted *array
+	sorted = &array{}
 	for next := range unique {
 		sorted.list = append(sorted.list, next)
 	}

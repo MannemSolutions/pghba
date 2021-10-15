@@ -65,8 +65,8 @@ func (a array) ToArray() array {
 	}
 }
 
-func (a array) ToSortedArray() array {
-	return alcToSortedArray(&a)
+func (a array) Unique() ALC {
+	return uniqueAlc(&a)
 }
 
 func (a array) ToList() []string {

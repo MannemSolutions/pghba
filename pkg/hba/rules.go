@@ -1,10 +1,7 @@
 package hba
 
 import (
-	"fmt"
 	"github.com/mannemsolutions/pghba/pkg/arg_list_comp"
-	"regexp"
-	"strings"
 )
 
 /*
@@ -12,51 +9,46 @@ Objects of this type can be used as a reader, getting one rule at a time.
 */
 
 type Rules struct {
-	rowNum uint
-	comments Comments
-	str      string
-	connType ConnTypes
-	database Databases
-	user Users
-	address Addresses
+	connTypes *arg_list_comp.ALC
+	databases arg_list_comp.ALC
+	users arg_list_comp.ALC
+	addresses arg_list_comp.ALC
 	method Method
 	options Options
 }
 
 func NewRules(connTypes string, databases string, users string, addresses string, mask string, method string, options string) (Rules, error) {
-	var rules Rules
-	ct := arg_list_comp.NewALC(connTypes)
-	for sConnType :=
-
-	ct := NewConnType(connType)
-	mtd := NewMethod(method)
-	db := Database(database)
-	usr := User(user)
-	addr, err := NewAddress(address)
-	if err != nil {
-		return Rule{}, err
-	}
-	if mask != "" {
-		err = addr.SetMask(mask)
-		if err != nil {
-			return Rule{}, err
-		}
-	}
 	opts, _, err := NewOptionsFromString(options)
 	if err != nil {
-		return Rule{}, err
+		return Rules{}, err
+	}
+	rules := Rules{
+		method: NewMethod(method),
+		options: opts,
+		connTypes: arg_list_comp.NewALC(connTypes).Unique(),
+	}
+	for _, sConnType := range .ToList() {
+		rules.connTypes = append(rules.connTypes, NewConnType(sConnType))
 	}
 
-	if ct == ConnTypeUnknown  || mtd == MethodUnknown {
-		return Rule{}, fmt.Errorf("new Rule has an invalid connection type (%s) or method (%s)", connType, method)
+	for _, sDatabase := range arg_list_comp.NewALC(databases).ToSortedArray().ToList() {
+		rules.databases = append(rules.databases, Database(sDatabase))
 	}
-	return Rule{
-		connType: ct,
-		method: mtd,
-		database: db,
-		user: usr,
-		address: addr,
-		options: opts,
-	}, nil
+
+	for _, sUser := range arg_list_comp.NewALC(users).ToSortedArray().ToList() {
+		rules.users = append(rules.users, User(sUser))
+	}
+	for _, sAddresses := range arg_list_comp.NewALC(addresses).ToSortedArray().ToList() {
+		address, err := NewAddress(sAddresses)
+		if err != nil {
+			return Rules{}, err
+		}
+		err = address.SetMask(mask)
+		if err != nil {
+			return Rules{}, err
+		}
+		rules.addresses = append(rules.addresses, address)
+	}
+	return rules, nil
 }
 
