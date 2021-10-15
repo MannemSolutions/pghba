@@ -88,6 +88,8 @@ type ALC interface {
 	ToArray()   (a array)
 	Reset()
 	String()    (s string)
+	ToSortedArray() array
+	ToList() []string
 }
 
 func NewALC (s string) (alc ALC){
@@ -106,8 +108,8 @@ func NewALC (s string) (alc ALC){
 	return nil
 }
 
-// Sorted creates an array with sorted unique elements
-func SortedArray(alc ALC) (sorted array) {
+// SortedArray creates an array with sorted unique elements
+func alcToSortedArray(alc ALC) (sorted array) {
 	// Clone so we can reset
 	a := alc.ToArray()
 	a.Reset()
@@ -130,3 +132,18 @@ func SortedArray(alc ALC) (sorted array) {
 	return sorted
 }
 
+// SortedArray creates an array with sorted unique elements
+func alcToList(alc ALC) (l []string) {
+	// Clone so we can reset
+	a := alc.ToArray()
+	a.Reset()
+	//Make unique
+	for {
+		next, done := a.Next()
+		if done {
+			break
+		}
+		l = append(l, next)
+	}
+	return l
+}

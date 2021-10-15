@@ -1,6 +1,7 @@
 package hba
 
-type Database string;
+type Database string
+type Databases []Database
 
 func (d Database) Compare(other Database) int {
 	if d == other {

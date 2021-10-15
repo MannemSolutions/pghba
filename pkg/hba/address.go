@@ -9,6 +9,7 @@ import (
 )
 
 type AddressType int
+type Addresses []Address
 
 const (
 	AddressTypeIpV4 AddressType = iota

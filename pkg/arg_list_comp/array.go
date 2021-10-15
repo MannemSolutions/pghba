@@ -56,11 +56,19 @@ func (a *array) Reset() {
 	a.index = 0
 }
 
-func (a array) ToArray() (array) {
+func (a array) ToArray() array {
 	return array{
 		prefix: a.prefix,
 		suffix: a.suffix,
 		index: a.index,
 		list: a.list,
 	}
+}
+
+func (a array) ToSortedArray() array {
+	return alcToSortedArray(&a)
+}
+
+func (a array) ToList() []string {
+	return alcToList(&a)
 }

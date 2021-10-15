@@ -80,6 +80,14 @@ func (l loop) ToArray() (a array) {
 	return a
 }
 
+func (l loop) ToSortedArray() array {
+	return alcToSortedArray(&l)
+}
+
+func (l loop) ToList() []string {
+	return alcToList(&l)
+}
+
 
 func (l loop) String() (s string) {
 	return fmt.Sprintf("%s{%d..%d}%s", l.prefix, l.begin, l.end, l.suffix)

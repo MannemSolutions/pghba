@@ -80,7 +80,14 @@ func (l charLoop) ToArray() (a array) {
 	return a
 }
 
+func (cl charLoop) String() (s string) {
+	return fmt.Sprintf("%s{%s..%s}%s", cl.prefix, string(cl.begin), string(cl.end), cl.suffix)
+}
 
-func (l charLoop) String() (s string) {
-	return fmt.Sprintf("%s{%s..%s}%s", l.prefix, string(l.begin), string(l.end), l.suffix)
+func (cl charLoop) ToSortedArray() array {
+	return alcToSortedArray(&cl)
+}
+
+func (cl charLoop) ToList() []string {
+	return alcToList(&cl)
 }
