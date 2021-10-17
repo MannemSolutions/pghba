@@ -44,10 +44,6 @@ func (f File) Read() error {
       return err
   }
   scanner := bufio.NewScanner(file)
-  err = file.Close()
-  if err != nil {
-    return err
-  }
   var lines Lines
   // optionally, resize scanner's capacity for lines over 64K, see next example
   for scanner.Scan() {
@@ -70,6 +66,10 @@ func (f File) Read() error {
       continue
     }
     return fmt.Errorf("could not parse this hba line %s", line)
+  }
+  err = file.Close()
+  if err != nil {
+    return err
   }
   if err := scanner.Err(); err != nil {
     return err

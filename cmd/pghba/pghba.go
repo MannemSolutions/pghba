@@ -99,8 +99,7 @@ Defaults to scram-sha256.`)
 	bindArgument("authMethod", []string{"PGHBAMETHOD"}, "scram-sha-256")
 
 	rootCmd.PersistentFlags().StringP("authOptions", "o", "",
-		`Authentication options that the new rule should have. 
-Defaults to md5.`)
+		`Authentication options that the new rule should have.`)
 	bindArgument("authOptions", []string{"PGHBAOPTIONS"}, "")
 
 	rootCmd.PersistentFlags().StringP("line", "l", "",

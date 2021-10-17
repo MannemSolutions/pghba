@@ -14,7 +14,7 @@ func newSplitter(str string) splitter{
 }
 
 func (s *splitter) Next() (string, error) {
-	re := regexp.MustCompile(`^\S*(?P<part>([^"]+|"[^"]*"))\S+(?P<rest>.*)$`)
+	re := regexp.MustCompile(`^\s*(?P<part>([^"\t ]+|"[^"\t ]*"))\s*(?P<rest>.*)$`)
 	matches := re.FindStringSubmatch(s.rest)
 	if matches == nil {
 		return "", fmt.Errorf("could not find next part in %s", s.rest)

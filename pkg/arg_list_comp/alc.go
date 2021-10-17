@@ -70,3 +70,10 @@ func alcToList(alc ALC) (l []string) {
 	}
 	return l
 }
+
+//func StrToALC(s string) ALC {
+//	return &array{
+//		list: []string{s},
+//	}
+//}
+

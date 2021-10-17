@@ -17,6 +17,14 @@ type Rules struct {
 	current Rule
 }
 
+//func getUnique(s string) arg_list_comp {
+//	alc := arg_list_comp.NewALC(s)
+//	if alc == nil {
+//		return arg_list_comp.StrToALC(s)
+//	}
+//
+//}
+
 func NewRules(rowNum int, connTypes string, databases string, users string, addresses string, mask string, method string, options string) (Rules, error) {
 	opts, _, err := NewOptionsFromString(options)
 	if err != nil {
