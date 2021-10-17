@@ -1,4 +1,4 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"fmt"
@@ -11,8 +11,6 @@ type charLoop struct {
 	index byte
 	end byte
 	suffix string
-	subIterator ALC
-	current string
 }
 
 func newAlcCharLoop(s string) (l *charLoop, err error) {
@@ -44,31 +42,19 @@ func newAlcCharLoop(s string) (l *charLoop, err error) {
 }
 
 func (cl charLoop) Current() string {
-	return cl.current
+	if cl.index > cl.end + 1 {
+		return ""
+	}
+	return fmt.Sprintf("%s%s%s", cl.prefix, string(cl.index-1), cl.suffix)
 }
 
 func (cl *charLoop) Next() (next string, done bool) {
-	if cl.subIterator != nil {
-		next, done := cl.subIterator.Next()
-		if done {
-			cl.subIterator = nil
-		} else {
-			cl.current = next
-			return cl.current, false
-		}
-	}
-	if cl.index > cl.end {
-		cl.current = ""
-		return cl.current, true
-	}
-	next = fmt.Sprintf("%s%s%s", cl.prefix, string(cl.index), cl.suffix)
 	cl.index += 1
-	cl.subIterator = NewALC(next)
-	if cl.subIterator != nil {
-		// Let s call the method again, just to let the top part handle this
-		return cl.Next()
+	next = cl.Current()
+	if next == "" {
+		done = true
 	}
-	return next, false
+	return next, done
 }
 
 func (cl *charLoop) Reset() {
@@ -91,7 +77,7 @@ func (cl charLoop) String() (s string) {
 	return fmt.Sprintf("%s{%s..%s}%s", cl.prefix, string(cl.begin), string(cl.end), cl.suffix)
 }
 
-func (cl charLoop) Unique() ALC {
+func (cl charLoop) Unique() Gnrtr {
 	return uniqueAlc(&cl)
 }
 

@@ -1,4 +1,4 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"fmt"
@@ -11,8 +11,6 @@ type charList struct {
 	list []byte
 	suffix string
 	index int
-	subIterator ALC
-	current string
 }
 
 func newAlcCharList(s string) (cl *charList, err error) {
@@ -57,35 +55,22 @@ func newAlcCharList(s string) (cl *charList, err error) {
 }
 
 func (cl charList) Current() string {
-	return cl.current
+	if cl.index > len(cl.list) {
+		return ""
+	}
+	return fmt.Sprintf("%s%s%s", cl.prefix, string(cl.list[cl.index-1]), cl.suffix)
 }
 
 func (cl *charList) Next() (next string, done bool) {
-	if cl.subIterator != nil {
-		next, done := cl.subIterator.Next()
-		if done {
-			cl.subIterator = nil
-		} else {
-			cl.current = next
-			return cl.current, false
-		}
-	}
-	if cl.index >= len(cl.list) {
-		cl.current = ""
-		return cl.current, true
-	}
-	next = fmt.Sprintf("%s%s%s", cl.prefix, string(cl.list[cl.index]), cl.suffix)
 	cl.index += 1
-	cl.subIterator = NewALC(next)
-	if cl.subIterator != nil {
-		// Let s call the method again, just to let the top part handle this
-		return cl.Next()
+	next = cl.Current()
+	if next == "" {
+		done = true
 	}
-	return next, false
+	return next, done
 }
 
 func (cl *charList) Reset() {
-	cl.current = ""
 	cl.index = 0
 }
 
@@ -105,7 +90,7 @@ func (cl *charList) String() (s string) {
 	return fmt.Sprintf("%s[%s]%s", cl.prefix, string(cl.list), cl.suffix)
 }
 
-func (cl charList) Unique() ALC {
+func (cl charList) Unique() Gnrtr {
 	return uniqueAlc(&cl)
 }
 func (cl charList) ToList() []string {

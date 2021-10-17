@@ -1,4 +1,4 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ func TestALCLoopSub(t *testing.T) {
 	var results []string
 	var done bool
 	myAlcDef := "test(ing|{1..3})"
-	myFuncName := fmt.Sprintf("NewALC(\"%s\")", myAlcDef)
-	myAlc := NewALC(myAlcDef)
+	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlcDef)
+	myAlc := NewGnrtr(myAlcDef)
 	assert.NotNil(t, myAlc, "%s should return an iterator", myFuncName)
 	assert.Equal(t, myAlcDef, myAlc.String(), "%s.String() should be \"%s\"", myFuncName, myAlcDef)
 	mySortedArray := myAlc.Unique()

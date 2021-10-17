@@ -1,20 +1,20 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"sort"
 )
 
-type ALC interface {
+type Gnrtr interface {
 	Current() string
 	Next()      (string, bool)
 	ToArray()   (a array)
 	Reset()
 	String()    (s string)
-	Unique() ALC
+	Unique() Gnrtr
 	ToList() []string
 }
 
-func NewALC (s string) (alc ALC){
+func NewGnrtr (s string) (alc Gnrtr){
 	if cl, err := newAlcCharList(s); err == nil {
 		return cl
 	}
@@ -31,9 +31,9 @@ func NewALC (s string) (alc ALC){
 }
 
 // uniqueAlc creates an array with sorted unique elements
-func uniqueAlc(alc ALC) (ALC) {
+func uniqueAlc(g Gnrtr) Gnrtr {
 	// Clone so we can reset
-	a := alc.ToArray()
+	a := g.ToArray()
 	a.Reset()
 	//Make unique
 	unique := make(map[string]bool)
@@ -56,9 +56,9 @@ func uniqueAlc(alc ALC) (ALC) {
 }
 
 // SortedArray creates an array with sorted unique elements
-func alcToList(alc ALC) (l []string) {
+func alcToList(g Gnrtr) (l []string) {
 	// Clone so we can reset
-	a := alc.ToArray()
+	a := g.ToArray()
 	a.Reset()
 	//Make unique
 	for {

@@ -1,4 +1,4 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"fmt"

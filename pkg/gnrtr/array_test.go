@@ -1,7 +1,7 @@
-package arg_list_comp_test
+package gnrtr_test
 
 import (
-	"github.com/mannemsolutions/pghba/pkg/arg_list_comp"
+	"github.com/mannemsolutions/pghba/pkg/gnrtr"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,8 +11,8 @@ func TestALCArray(t *testing.T) {
 	var results []string
 	var done bool
 	myAlc := "test(ing||user|er)"
-	myFuncName := "NewALC(\"test(ing||user|er)\")"
-	myArray := arg_list_comp.NewALC(myAlc)
+	myFuncName := "NewGnrtr(\"test(ing||user|er)\")"
+	myArray := gnrtr.NewGnrtr(myAlc)
 	if ! assert.NotNil(t, myArray, "%s should return an array iterator", myFuncName) {
 		return
 	}

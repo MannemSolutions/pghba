@@ -1,4 +1,4 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"fmt"
@@ -6,22 +6,20 @@ import (
 	"strings"
 )
 
-type loop struct {
+type intLoop struct {
 	prefix string
 	begin int
 	index int
 	end int
 	suffix string
-	subIterator ALC
-	current string
 }
 
-func newAlcLoop(s string) (l *loop, err error) {
+func newAlcLoop(s string) (l *intLoop, err error) {
 	prefix, comprehension, suffix, err := groupChar("{").Parts(s)
 	if err != nil {
 		return nil, err
 	}
-	l = &loop {
+	l = &intLoop {
 		prefix: prefix,
 		suffix: suffix,
 		index: 0,
@@ -43,39 +41,27 @@ func newAlcLoop(s string) (l *loop, err error) {
 	return l, nil
 }
 
-func (l loop) Current() string {
-	return l.current
+func (l intLoop) Current() string {
+	if l.index > l.end +1 {
+		return ""
+	}
+	return fmt.Sprintf("%s%d%s", l.prefix, l.index - 1 , l.suffix)
 }
 
-func (l *loop) Next() (next string, done bool) {
-	if l.subIterator != nil {
-		next, done := l.subIterator.Next()
-		if done {
-			l.subIterator = nil
-		} else {
-			l.current = next
-			return l.current, false
-		}
-	}
-	if l.index > l.end {
-		l.current = ""
-		return l.current, true
-	}
-	next = fmt.Sprintf("%s%d%s", l.prefix, l.index, l.suffix)
+func (l *intLoop) Next() (next string, done bool) {
 	l.index += 1
-	l.subIterator = NewALC(next)
-	if l.subIterator != nil {
-		// Let s call the method again, just to let the top part handle this
-		return l.Next()
+	next = l.Current()
+	if next == "" {
+		done = true
 	}
-	return next, false
+	return l.Current(), done
 }
 
-func (l *loop) Reset() {
+func (l *intLoop) Reset() {
 	l.index = l.begin
 }
 
-func (l loop) ToArray() (a array) {
+func (l intLoop) ToArray() (a array) {
 	a = array{
 		prefix: l.prefix,
 		suffix: l.suffix,
@@ -87,14 +73,14 @@ func (l loop) ToArray() (a array) {
 	return a
 }
 
-func (l loop) Unique() ALC {
+func (l intLoop) Unique() Gnrtr {
 	return uniqueAlc(&l)
 }
 
-func (l loop) ToList() []string {
+func (l intLoop) ToList() []string {
 	return alcToList(&l)
 }
 
-func (l loop) String() (s string) {
+func (l intLoop) String() (s string) {
 	return fmt.Sprintf("%s{%d..%d}%s", l.prefix, l.begin, l.end, l.suffix)
 }

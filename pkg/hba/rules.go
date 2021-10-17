@@ -1,7 +1,7 @@
 package hba
 
 import (
-	"github.com/mannemsolutions/pghba/pkg/arg_list_comp"
+	"github.com/mannemsolutions/pghba/pkg/gnrtr"
 )
 
 /*
@@ -9,18 +9,18 @@ Objects of this type can be used as a reader, getting one rule at a time.
 */
 
 type Rules struct {
-	connTypes arg_list_comp.ALC
-	databases arg_list_comp.ALC
-	users arg_list_comp.ALC
-	addresses arg_list_comp.ALC
+	connTypes gnrtr.Gnrtr
+	databases gnrtr.Gnrtr
+	users gnrtr.Gnrtr
+	addresses gnrtr.Gnrtr
 	mask      string
 	current Rule
 }
 
-//func getUnique(s string) arg_list_comp {
-//	alc := arg_list_comp.NewALC(s)
+//func getUnique(s string) gnrtr {
+//	alc := gnrtr.NewGnrtr(s)
 //	if alc == nil {
-//		return arg_list_comp.StrToALC(s)
+//		return gnrtr.StrToGnrtr(s)
 //	}
 //
 //}
@@ -31,10 +31,10 @@ func NewRules(rowNum int, connTypes string, databases string, users string, addr
 		return Rules{}, err
 	}
 	rules := Rules{
-		connTypes: arg_list_comp.NewALC(connTypes).Unique(),
-		databases: arg_list_comp.NewALC(databases).Unique(),
-		users: arg_list_comp.NewALC(users).Unique(),
-		addresses: arg_list_comp.NewALC(addresses).Unique(),
+		connTypes: gnrtr.NewGnrtr(connTypes).Unique(),
+		databases: gnrtr.NewGnrtr(databases).Unique(),
+		users: gnrtr.NewGnrtr(users).Unique(),
+		addresses: gnrtr.NewGnrtr(addresses).Unique(),
 		mask: mask,
 		current: Rule{
 			rowNum: rowNum,

@@ -1,4 +1,4 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ type array struct {
 	list []string
 	suffix string
 	index int
-	subIterator ALC
+	subIterator Gnrtr
 	current string
 }
 
@@ -47,7 +47,7 @@ func (a *array) Next() (next string, done bool) {
 	}
 	next = fmt.Sprintf("%s%s%s", a.prefix, a.list[a.index], a.suffix)
 	a.index += 1
-	a.subIterator = NewALC(next)
+	a.subIterator = NewGnrtr(next)
 	if a.subIterator != nil {
 		// Let s call the method again, just to let the top part handle this
 		return a.Next()
@@ -73,7 +73,7 @@ func (a array) ToArray() array {
 	}
 }
 
-func (a array) Unique() ALC {
+func (a array) Unique() Gnrtr {
 	return uniqueAlc(&a)
 }
 

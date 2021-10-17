@@ -1,4 +1,4 @@
-package arg_list_comp
+package gnrtr
 
 import (
 	"fmt"
@@ -12,8 +12,8 @@ func TestALCIntLoop(t *testing.T) {
 	var done bool
 	myAlc := "test{1..3}"
 	myArrayAlc := "test(1|2|3)"
-	myFuncName := fmt.Sprintf("NewALC(\"%s\")", myAlc)
-	myLoop := NewALC(myAlc)
+	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlc)
+	myLoop := NewGnrtr(myAlc)
 	if ! assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
 		return
 	}

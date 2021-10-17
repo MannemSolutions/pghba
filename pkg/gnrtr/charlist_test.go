@@ -1,8 +1,8 @@
-package arg_list_comp_test
+package gnrtr_test
 
 import (
 	"fmt"
-	"github.com/mannemsolutions/pghba/pkg/arg_list_comp"
+	"github.com/mannemsolutions/pghba/pkg/gnrtr"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -13,8 +13,8 @@ func TestAlcCharList(t *testing.T) {
 	var done bool
 	myAlc := "test_[abc]"
 	myArrayAlc := "test_(a|b|c)"
-	myFuncName := fmt.Sprintf("NewALC(\"%s\")", myAlc)
-	myLoop := arg_list_comp.NewALC(myAlc)
+	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlc)
+	myLoop := gnrtr.NewGnrtr(myAlc)
 	if ! assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
 		return
 	}
