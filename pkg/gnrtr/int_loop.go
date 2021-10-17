@@ -8,9 +8,9 @@ import (
 
 type intLoop struct {
 	prefix string
-	begin int
-	index int
-	end int
+	begin  int
+	index  int
+	end    int
 	suffix string
 }
 
@@ -19,13 +19,13 @@ func newAlcLoop(s string) (l *intLoop, err error) {
 	if err != nil {
 		return nil, err
 	}
-	l = &intLoop {
+	l = &intLoop{
 		prefix: prefix,
 		suffix: suffix,
-		index: 0,
+		index:  0,
 	}
 	csplit := strings.Split(comprehension, "..")
-	if len (csplit) != 2 {
+	if len(csplit) != 2 {
 		return nil, fmt.Errorf("invalid format for array comprehension (should be (iStart..iEnd), is %s)", comprehension)
 	}
 	l.begin, err = strconv.Atoi(csplit[0])
@@ -42,10 +42,10 @@ func newAlcLoop(s string) (l *intLoop, err error) {
 }
 
 func (l intLoop) Current() string {
-	if l.index > l.end +1 {
+	if l.index > l.end+1 {
 		return ""
 	}
-	return fmt.Sprintf("%s%d%s", l.prefix, l.index - 1 , l.suffix)
+	return fmt.Sprintf("%s%d%s", l.prefix, l.index-1, l.suffix)
 }
 
 func (l *intLoop) Next() (next string, done bool) {
@@ -65,9 +65,9 @@ func (l intLoop) ToArray() (a array) {
 	a = array{
 		prefix: l.prefix,
 		suffix: l.suffix,
-		index: l.index-l.begin,
+		index:  l.index - l.begin,
 	}
-	for i:=l.begin;i<=l.end;i++ {
+	for i := l.begin; i <= l.end; i++ {
 		a.list = append(a.list, fmt.Sprintf("%d", i))
 	}
 	return a

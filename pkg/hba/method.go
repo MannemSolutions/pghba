@@ -22,20 +22,20 @@ const (
 
 var (
 	toMethod = map[string]Method{
-		"cert": MethodCert,
-		"gss": MethodGss,
-		"ident": MethodIdent,
-		"krb5": MethodKrb5,
-		"ldap": MethodLdap,
-		"md5": MethodMd5,
-		"pam": MethodPam,
-		"password": MethodPassword,
-		"peer": MethodPeer,
-		"radius": MethodRadius,
-		"reject": MethodReject,
+		"cert":          MethodCert,
+		"gss":           MethodGss,
+		"ident":         MethodIdent,
+		"krb5":          MethodKrb5,
+		"ldap":          MethodLdap,
+		"md5":           MethodMd5,
+		"pam":           MethodPam,
+		"password":      MethodPassword,
+		"peer":          MethodPeer,
+		"radius":        MethodRadius,
+		"reject":        MethodReject,
 		"scram-sha-256": MethodScramSha256,
-		"sspi": MethodSspi,
-		"trust": MethodTrust,
+		"sspi":          MethodSspi,
+		"trust":         MethodTrust,
 	}
 	fromMethod = map[Method]string{}
 )

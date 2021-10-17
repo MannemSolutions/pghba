@@ -6,15 +6,15 @@ import (
 )
 
 type Rule struct {
-	rowNum int
+	rowNum   int
 	comments Comments
 	str      string
 	connType ConnType
 	database Database
-	user User
-	address Address
-	method Method
-	options Options
+	user     User
+	address  Address
+	method   Method
+	options  Options
 }
 
 func NewRule(rowNum int, connType string, database string, user string, address string, mask string, method string, options string) (Rule, error) {
@@ -37,17 +37,17 @@ func NewRule(rowNum int, connType string, database string, user string, address 
 		return Rule{}, err
 	}
 
-	if ct == ConnTypeUnknown  || mtd == MethodUnknown {
+	if ct == ConnTypeUnknown || mtd == MethodUnknown {
 		return Rule{}, fmt.Errorf("new Rule has an invalid connection type (%s) or method (%s)", connType, method)
 	}
 	return Rule{
-		rowNum: rowNum,
+		rowNum:   rowNum,
 		connType: ct,
-		method: mtd,
+		method:   mtd,
 		database: db,
-		user: usr,
-		address: addr,
-		options: opts,
+		user:     usr,
+		address:  addr,
+		options:  opts,
 	}, nil
 }
 func NewRuleFromLine(line string) (Rule, error) {
@@ -104,7 +104,7 @@ func NewRuleFromLine(line string) (Rule, error) {
 	}
 
 	options, comment, err := NewOptionsFromString(parts.Rest())
-	if err !=  nil {
+	if err != nil {
 		return Rule{}, fmt.Errorf("could not parse options from %s", parts.Rest())
 	}
 	r.options = options
@@ -120,7 +120,7 @@ func (r *Rule) PrependComments(comments Comments) {
 
 func (r Rule) Compare(other Line) (comparison int) {
 	o, ok := other.(Rule)
-	if ! ok {
+	if !ok {
 		// We cannot compare rules with other line types
 		return 0
 	}
@@ -185,15 +185,15 @@ func (r Rule) RowNum() int {
 }
 
 func (r Rule) Clone() Rule {
- 	return Rule{
- 		rowNum: r.rowNum,
- 		comments: r.comments,
- 		str: r.str,
- 		connType: r.connType,
- 		database: r.database,
- 		user: r.user,
- 		address: r.address.Clone(),
- 		method: r.method,
- 		options: r.options,
+	return Rule{
+		rowNum:   r.rowNum,
+		comments: r.comments,
+		str:      r.str,
+		connType: r.connType,
+		database: r.database,
+		user:     r.user,
+		address:  r.address.Clone(),
+		method:   r.method,
+		options:  r.options,
 	}
- }
+}

@@ -8,9 +8,9 @@ import (
 
 type charList struct {
 	prefix string
-	list []byte
+	list   []byte
 	suffix string
-	index int
+	index  int
 }
 
 func newAlcCharList(s string) (cl *charList, err error) {
@@ -24,12 +24,12 @@ func newAlcCharList(s string) (cl *charList, err error) {
 	cl = &charList{
 		prefix: prefix,
 		suffix: suffix,
-		index: 0,
+		index:  0,
 	}
-	if strings.HasSuffix(comprehension, "-" ) {
+	if strings.HasSuffix(comprehension, "-") {
 		cl.list = []byte("-")
 	}
-	if strings.HasPrefix(comprehension, "-" ) {
+	if strings.HasPrefix(comprehension, "-") {
 		cl.list = []byte("-")
 	}
 	re := regexp.MustCompile(`(-)?([^-]|([^-][-][^-]))*(-)?`)
@@ -39,11 +39,11 @@ func newAlcCharList(s string) (cl *charList, err error) {
 	}
 	for _, match := range matches {
 		start := comprehension[match[0]]
-		if match[1] - match[0] == 1 {
+		if match[1]-match[0] == 1 {
 			cl.list = append(cl.list, start)
-		} else if match[1] - match[0] == 3 {
+		} else if match[1]-match[0] == 3 {
 			end := comprehension[match[0]+match[1]-1]
-			for c:= start; c <= end; c++ {
+			for c := start; c <= end; c++ {
 				cl.list = append(cl.list, c)
 			}
 		} else {
@@ -78,9 +78,9 @@ func (cl *charList) ToArray() (a array) {
 	a = array{
 		prefix: cl.prefix,
 		suffix: cl.suffix,
-		index: cl.index,
+		index:  cl.index,
 	}
-	for i:=0;i<len(cl.list); i++ {
+	for i := 0; i < len(cl.list); i++ {
 		a.list = append(a.list, string([]byte{cl.list[i]}))
 	}
 	return a

@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	log  *zap.SugaredLogger
+	log *zap.SugaredLogger
 )
 
 func InitLogger(logger *zap.SugaredLogger) {

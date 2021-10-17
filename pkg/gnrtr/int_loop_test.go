@@ -14,7 +14,7 @@ func TestALCIntLoop(t *testing.T) {
 	myArrayAlc := "test(1|2|3)"
 	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlc)
 	myLoop := NewGnrtr(myAlc)
-	if ! assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
+	if !assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
 		return
 	}
 	assert.Equal(t, myLoop.String(), myAlc, "%s.String() should be \"%s\"", myFuncName, myAlc)
@@ -32,4 +32,3 @@ func TestALCIntLoop(t *testing.T) {
 	assert.Contains(t, results, "test1", "%s should return \"test1\"", myFuncName)
 	assert.Contains(t, results, "test3", "%s should return \"test3\"", myFuncName)
 }
-

@@ -14,11 +14,11 @@ const (
 
 var (
 	toConnType = map[string]ConnType{
-		"local": ConnTypeLocal,
-		"host": ConnTypeHost,
-		"hostssl": ConnTypeHostSsl,
-		"hostnossl": ConnTypeHostNoSsl,
-		"hostgssenc": ConnTypeHostGssEnc,
+		"local":        ConnTypeLocal,
+		"host":         ConnTypeHost,
+		"hostssl":      ConnTypeHostSsl,
+		"hostnossl":    ConnTypeHostNoSsl,
+		"hostgssenc":   ConnTypeHostGssEnc,
 		"hostnogssenc": ConnTypeHostNoGssEnc,
 	}
 	fromConnType = map[ConnType]string{}

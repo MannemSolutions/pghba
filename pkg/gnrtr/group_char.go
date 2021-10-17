@@ -10,11 +10,11 @@ type groupChar string
 
 const (
 	squareStart groupChar = "["
-	roundStart groupChar = "("
-	curlyStart groupChar = "{"
-	squareEnd groupChar = "]"
-	roundEnd groupChar = ")"
-	curlyEnd groupChar = "}"
+	roundStart  groupChar = "("
+	curlyStart  groupChar = "{"
+	squareEnd   groupChar = "]"
+	roundEnd    groupChar = ")"
+	curlyEnd    groupChar = "}"
 )
 
 type groupChars map[groupChar]groupChar
@@ -38,22 +38,22 @@ func (g groupChars) allStartChars() (all []string) {
 }
 
 var (
-	partsIsDone = fmt.Errorf("no more parts to split")
+	partsIsDone     = fmt.Errorf("no more parts to split")
 	groupStartToEnd = groupChars{
-		curlyStart: curlyEnd,
-		roundStart: roundEnd,
+		curlyStart:  curlyEnd,
+		roundStart:  roundEnd,
 		squareStart: squareEnd,
 	}
 )
 
-func (groupStart groupChar) Parts (s string) (prefix string, comprehension string, postfix string, err error) {
+func (groupStart groupChar) Parts(s string) (prefix string, comprehension string, postfix string, err error) {
 	var exists bool
 	groupEnd, exists := groupStartToEnd[groupStart]
-	if ! exists {
-		return "","", "", fmt.Errorf("invalid group start")
+	if !exists {
+		return "", "", "", fmt.Errorf("invalid group start")
 	}
 	re := regexp.MustCompile(fmt.Sprintf(`(?P<prefix>.*)(?P<comprehension>\%s[^\%s]*\%s)(?P<postfix>.*)`,
-		groupStart, strings.Join(groupStartToEnd.allChars(),"\\"), groupEnd))
+		groupStart, strings.Join(groupStartToEnd.allChars(), "\\"), groupEnd))
 	matches := re.FindStringSubmatch(s)
 	if matches == nil {
 		err = partsIsDone
@@ -64,20 +64,20 @@ func (groupStart groupChar) Parts (s string) (prefix string, comprehension strin
 		fields[name] = matches[id]
 	}
 	prefix, exists = fields["prefix"]
-	if ! exists {
+	if !exists {
 		err = fmt.Errorf("there is no prefix")
 		return
 	}
 	comprehension, exists = fields["comprehension"]
-	if ! exists {
+	if !exists {
 		err = fmt.Errorf("there is no comprehension part")
 		return
 	}
 	postfix, exists = fields["postfix"]
-	if ! exists {
+	if !exists {
 		err = fmt.Errorf("there is no postfix")
 		return
 	}
-	comprehension = comprehension[1:len(comprehension)-1]
+	comprehension = comprehension[1 : len(comprehension)-1]
 	return
 }

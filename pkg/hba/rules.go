@@ -11,10 +11,10 @@ Objects of this type can be used as a reader, getting one rule at a time.
 type Rules struct {
 	connTypes gnrtr.Gnrtr
 	databases gnrtr.Gnrtr
-	users gnrtr.Gnrtr
+	users     gnrtr.Gnrtr
 	addresses gnrtr.Gnrtr
 	mask      string
-	current Rule
+	current   Rule
 }
 
 //func getUnique(s string) gnrtr {
@@ -33,14 +33,14 @@ func NewRules(rowNum int, connTypes string, databases string, users string, addr
 	rules := Rules{
 		connTypes: gnrtr.NewGnrtr(connTypes).Unique(),
 		databases: gnrtr.NewGnrtr(databases).Unique(),
-		users: gnrtr.NewGnrtr(users).Unique(),
+		users:     gnrtr.NewGnrtr(users).Unique(),
 		addresses: gnrtr.NewGnrtr(addresses).Unique(),
-		mask: mask,
+		mask:      mask,
 		current: Rule{
-			rowNum: rowNum,
+			rowNum:   rowNum,
 			connType: ConnTypeUnknown,
-			method: NewMethod(method),
-			options: opts,
+			method:   NewMethod(method),
+			options:  opts,
 		},
 	}
 	rules.databases.Next()
@@ -49,7 +49,7 @@ func NewRules(rowNum int, connTypes string, databases string, users string, addr
 	return rules, nil
 }
 
-func (rs Rules) Current() (next Rule, err error){
+func (rs Rules) Current() (next Rule, err error) {
 	if rs.current.connType == ConnTypeUnknown {
 		rs.current.connType = NewConnType(rs.connTypes.Current())
 	}
@@ -69,7 +69,7 @@ func (rs Rules) Current() (next Rule, err error){
 }
 
 func (rs Rules) Next() (next Rule, done bool, err error) {
-	if ct, done := rs.connTypes.Next(); ! done {
+	if ct, done := rs.connTypes.Next(); !done {
 		rs.current.connType = NewConnType(ct)
 		if next, err = rs.Current(); err != nil {
 			return Rule{}, false, err
@@ -78,7 +78,7 @@ func (rs Rules) Next() (next Rule, done bool, err error) {
 		}
 	}
 
-	if d, done := rs.databases.Next(); ! done {
+	if d, done := rs.databases.Next(); !done {
 		rs.current.database = Database(d)
 		if next, err = rs.Current(); err != nil {
 			return Rule{}, false, err
@@ -87,7 +87,7 @@ func (rs Rules) Next() (next Rule, done bool, err error) {
 		}
 	}
 
-	if u, done := rs.users.Next(); ! done {
+	if u, done := rs.users.Next(); !done {
 		rs.current.user = User(u)
 		if next, err = rs.Current(); err != nil {
 			return Rule{}, false, err
@@ -96,7 +96,7 @@ func (rs Rules) Next() (next Rule, done bool, err error) {
 		}
 	}
 
-	if a, done := rs.addresses.Next(); ! done {
+	if a, done := rs.addresses.Next(); !done {
 		if rs.current.address, err = NewAddress(a); err != nil {
 			return Rule{}, false, err
 		}
@@ -111,4 +111,3 @@ func (rs Rules) Next() (next Rule, done bool, err error) {
 	}
 	return Rule{}, true, nil
 }
-

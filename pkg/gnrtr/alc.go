@@ -6,15 +6,15 @@ import (
 
 type Gnrtr interface {
 	Current() string
-	Next()      (string, bool)
-	ToArray()   (a array)
+	Next() (string, bool)
+	ToArray() (a array)
 	Reset()
-	String()    (s string)
+	String() (s string)
 	Unique() Gnrtr
 	ToList() []string
 }
 
-func NewGnrtr (s string) (alc Gnrtr){
+func NewGnrtr(s string) (alc Gnrtr) {
 	if cl, err := newAlcCharList(s); err == nil {
 		return cl
 	}
@@ -76,4 +76,3 @@ func alcToList(g Gnrtr) (l []string) {
 //		list: []string{s},
 //	}
 //}
-

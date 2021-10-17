@@ -12,9 +12,9 @@ import (
 var (
 	cfgFile string
 	rootCmd = &cobra.Command{
-	Use:   "pghba",
-	Short: "A tool to manage PostgreSQL pg_hba.conf files",
-	Long: `The pghba tool delivers admins with a tool to manage pg_hba files with a bit more sophistication.
+		Use:   "pghba",
+		Short: "A tool to manage PostgreSQL pg_hba.conf files",
+		Long: `The pghba tool delivers admins with a tool to manage pg_hba files with a bit more sophistication.
 Complete documentation is available at https://github.com/mannemsolutions/pghba/`,
 	}
 )
@@ -52,10 +52,10 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringP("cfgFile", "c", "", "config file (default is $HOME/.pghba.yaml)")
-	bindArgument("cfgFile", []string{"PGHBACFG"}, filepath.Join(currentUser.HomeDir, ".pghba.yaml"))	
+	bindArgument("cfgFile", []string{"PGHBACFG"}, filepath.Join(currentUser.HomeDir, ".pghba.yaml"))
 	viper.AddConfigPath(viper.GetString("cfgFile"))
 	err = viper.ReadInConfig() // Find and read the config file
-	if err == nil { // Handle errors reading the config file
+	if err == nil {            // Handle errors reading the config file
 		fmt.Printf("pghba is reading config from this config file: %s", viper.ConfigFileUsed())
 	}
 

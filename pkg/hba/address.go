@@ -48,9 +48,9 @@ func aTypeFromStr(addr string) AddressType {
 }
 
 type Address struct {
-	ip net.IP
+	ip    net.IP
 	ipNet *net.IPNet
-	str string
+	str   string
 	aType AddressType
 }
 
@@ -58,7 +58,7 @@ func NewAddress(addr string) (a Address, err error) {
 	a.str = addr
 	if strings.Contains(addr, "/") {
 		// This is a CIDR (like "192.0.2.0/24" or "2001:db8::/32")
-		_ , ipNet, err := net.ParseCIDR(addr)
+		_, ipNet, err := net.ParseCIDR(addr)
 		if err != nil {
 			return Address{}, fmt.Errorf("address %s seems like a CIDR, but isn't", addr)
 		}
@@ -166,7 +166,7 @@ func (a *Address) SetMask(mask string) error {
 	if a.aType != AddressTypeIpV4 && a.aType != AddressTypeIpV6 {
 		return fmt.Errorf("cannot set mask on something other then ipv4 or ipv6 mask")
 	}
-	if ! a.ip.IsUnspecified() {
+	if !a.ip.IsUnspecified() {
 		return fmt.Errorf("cannot apply mask %s to address that is not ip %s", mask, a.str)
 	}
 	// use ParseIP to find ou the bytes
@@ -187,9 +187,9 @@ func (a Address) Unset() bool {
 
 func (a Address) Clone() Address {
 	return Address{
-		ip: a.ip,
+		ip:    a.ip,
 		ipNet: a.ipNet,
-		str: a.str,
+		str:   a.str,
 		aType: a.aType,
 	}
 }

@@ -9,7 +9,7 @@ type splitter struct {
 	rest string
 }
 
-func newSplitter(str string) splitter{
+func newSplitter(str string) splitter {
 	return splitter{rest: str}
 }
 
@@ -24,7 +24,7 @@ func (s *splitter) Next() (string, error) {
 		fields[name] = matches[id]
 	}
 	part, exists := fields["part"]
-	if ! exists {
+	if !exists {
 		return "", fmt.Errorf("next part seems empty in %s", s.rest)
 	}
 	s.rest = fields["rest"]

@@ -13,7 +13,7 @@ func TestALCArray(t *testing.T) {
 	myAlc := "test(ing||user|er)"
 	myFuncName := "NewGnrtr(\"test(ing||user|er)\")"
 	myArray := gnrtr.NewGnrtr(myAlc)
-	if ! assert.NotNil(t, myArray, "%s should return an array iterator", myFuncName) {
+	if !assert.NotNil(t, myArray, "%s should return an array iterator", myFuncName) {
 		return
 	}
 	for {

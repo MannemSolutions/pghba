@@ -14,7 +14,7 @@ func TestALCCharLoop(t *testing.T) {
 	myArrayAlc := "test_(a|b|c)"
 	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlc)
 	myLoop := NewGnrtr(myAlc)
-	if ! assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
+	if !assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
 		return
 	}
 	assert.Equal(t, myAlc, myLoop.String(), "%s.String() should be \"%s\"", myFuncName, myAlc)

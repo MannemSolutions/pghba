@@ -7,9 +7,9 @@ import (
 
 type charLoop struct {
 	prefix string
-	begin byte
-	index byte
-	end byte
+	begin  byte
+	index  byte
+	end    byte
 	suffix string
 }
 
@@ -18,12 +18,12 @@ func newAlcCharLoop(s string) (l *charLoop, err error) {
 	if err != nil {
 		return nil, err
 	}
-	l = &charLoop {
+	l = &charLoop{
 		prefix: prefix,
 		suffix: suffix,
 	}
 	csplit := strings.Split(comprehension, "..")
-	if len (csplit) != 2 {
+	if len(csplit) != 2 {
 		return nil, fmt.Errorf("invalid format for character loop comprehension (should be {cStart..cEnd}, is %s)", comprehension)
 	}
 	if len(csplit[0]) != 1 {
@@ -42,7 +42,7 @@ func newAlcCharLoop(s string) (l *charLoop, err error) {
 }
 
 func (cl charLoop) Current() string {
-	if cl.index > cl.end + 1 {
+	if cl.index > cl.end+1 {
 		return ""
 	}
 	return fmt.Sprintf("%s%s%s", cl.prefix, string(cl.index-1), cl.suffix)
@@ -65,9 +65,9 @@ func (cl charLoop) ToArray() (a array) {
 	a = array{
 		prefix: cl.prefix,
 		suffix: cl.suffix,
-		index:  int(cl.index- cl.begin),
+		index:  int(cl.index - cl.begin),
 	}
-	for c:= cl.begin;c<= cl.end;c++ {
+	for c := cl.begin; c <= cl.end; c++ {
 		a.list = append(a.list, string(c))
 	}
 	return a

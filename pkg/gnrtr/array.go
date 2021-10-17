@@ -6,12 +6,12 @@ import (
 )
 
 type array struct {
-	prefix string
-	list []string
-	suffix string
-	index int
+	prefix      string
+	list        []string
+	suffix      string
+	index       int
 	subIterator Gnrtr
-	current string
+	current     string
 }
 
 func newAlcArray(s string) (a *array, err error) {
@@ -21,9 +21,9 @@ func newAlcArray(s string) (a *array, err error) {
 	}
 	return &array{
 		prefix: prefix,
-		list: strings.Split(comprehension, "|"),
+		list:   strings.Split(comprehension, "|"),
 		suffix: suffix,
-		index: 0,
+		index:  0,
 	}, nil
 }
 
@@ -68,8 +68,8 @@ func (a array) ToArray() array {
 	return array{
 		prefix: a.prefix,
 		suffix: a.suffix,
-		index: a.index,
-		list: a.list,
+		index:  a.index,
+		list:   a.list,
 	}
 }
 
