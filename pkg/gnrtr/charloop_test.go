@@ -6,21 +6,21 @@ import (
 	"testing"
 )
 
-func TestALCCharLoop(t *testing.T) {
+func TestGnrtrCharLoop(t *testing.T) {
 	var next string
 	var results []string
 	var done bool
-	myAlc := "test_{a..c}"
-	myArrayAlc := "test_(a|b|c)"
-	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlc)
-	myLoop := NewGnrtr(myAlc)
+	myGnrtr := "test_{a..c}"
+	myArrayGnrtr := "test_(a|b|c)"
+	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myGnrtr)
+	myLoop := NewGnrtr(myGnrtr)
 	if !assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
 		return
 	}
-	assert.Equal(t, myAlc, myLoop.String(), "%s.String() should be \"%s\"", myFuncName, myAlc)
+	assert.Equal(t, myGnrtr, myLoop.String(), "%s.String() should be \"%s\"", myFuncName, myGnrtr)
 
-	assert.Equal(t, myArrayAlc, myLoop.ToArray().String(),
-		"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayAlc)
+	assert.Equal(t, myArrayGnrtr, myLoop.ToArray().String(),
+		"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayGnrtr)
 	for {
 		next, done = myLoop.Next()
 		if done {

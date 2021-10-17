@@ -14,7 +14,7 @@ type intLoop struct {
 	suffix string
 }
 
-func newAlcLoop(s string) (l *intLoop, err error) {
+func newGnrtrLoop(s string) (l *intLoop, err error) {
 	prefix, comprehension, suffix, err := groupChar("{").Parts(s)
 	if err != nil {
 		return nil, err
@@ -74,11 +74,11 @@ func (l intLoop) ToArray() (a array) {
 }
 
 func (l intLoop) Unique() Gnrtr {
-	return uniqueAlc(&l)
+	return uniqueGnrtr(&l)
 }
 
 func (l intLoop) ToList() []string {
-	return alcToList(&l)
+	return gnrtrToList(&l)
 }
 
 func (l intLoop) String() (s string) {

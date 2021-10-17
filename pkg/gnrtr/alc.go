@@ -14,24 +14,24 @@ type Gnrtr interface {
 	ToList() []string
 }
 
-func NewGnrtr(s string) (alc Gnrtr) {
-	if cl, err := newAlcCharList(s); err == nil {
+func NewGnrtr(s string) (g Gnrtr) {
+	if cl, err := newGnrtrCharList(s); err == nil {
 		return cl
 	}
-	if a, err := newAlcArray(s); err == nil {
+	if a, err := newGnrtrArray(s); err == nil {
 		return a
 	}
-	if l, err := newAlcLoop(s); err == nil {
+	if l, err := newGnrtrLoop(s); err == nil {
 		return l
 	}
-	if l, err := newAlcCharLoop(s); err == nil {
+	if l, err := newGnrtrCharLoop(s); err == nil {
 		return l
 	}
 	return nil
 }
 
-// uniqueAlc creates an array with sorted unique elements
-func uniqueAlc(g Gnrtr) Gnrtr {
+// uniqueGnrtr creates an array with sorted unique elements
+func uniqueGnrtr(g Gnrtr) Gnrtr {
 	// Clone so we can reset
 	a := g.ToArray()
 	a.Reset()
@@ -56,7 +56,7 @@ func uniqueAlc(g Gnrtr) Gnrtr {
 }
 
 // SortedArray creates an array with sorted unique elements
-func alcToList(g Gnrtr) (l []string) {
+func gnrtrToList(g Gnrtr) (l []string) {
 	// Clone so we can reset
 	a := g.ToArray()
 	a.Reset()
@@ -71,7 +71,7 @@ func alcToList(g Gnrtr) (l []string) {
 	return l
 }
 
-//func StrToALC(s string) ALC {
+//func StrToGnrtr(s string) Gnrtr {
 //	return &array{
 //		list: []string{s},
 //	}

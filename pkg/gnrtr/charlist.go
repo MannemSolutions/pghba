@@ -13,7 +13,7 @@ type charList struct {
 	index  int
 }
 
-func newAlcCharList(s string) (cl *charList, err error) {
+func newGnrtrCharList(s string) (cl *charList, err error) {
 	prefix, comprehension, suffix, err := groupChar("[").Parts(s)
 	if err != nil {
 		return nil, err
@@ -91,8 +91,8 @@ func (cl *charList) String() (s string) {
 }
 
 func (cl charList) Unique() Gnrtr {
-	return uniqueAlc(&cl)
+	return uniqueGnrtr(&cl)
 }
 func (cl charList) ToList() []string {
-	return alcToList(&cl)
+	return gnrtrToList(&cl)
 }

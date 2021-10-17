@@ -14,7 +14,7 @@ type array struct {
 	current     string
 }
 
-func newAlcArray(s string) (a *array, err error) {
+func newGnrtrArray(s string) (a *array, err error) {
 	prefix, comprehension, suffix, err := groupChar("(").Parts(s)
 	if err != nil {
 		return nil, err
@@ -74,9 +74,9 @@ func (a array) ToArray() array {
 }
 
 func (a array) Unique() Gnrtr {
-	return uniqueAlc(&a)
+	return uniqueGnrtr(&a)
 }
 
 func (a array) ToList() []string {
-	return alcToList(&a)
+	return gnrtrToList(&a)
 }

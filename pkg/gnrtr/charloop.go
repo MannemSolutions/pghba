@@ -13,7 +13,7 @@ type charLoop struct {
 	suffix string
 }
 
-func newAlcCharLoop(s string) (l *charLoop, err error) {
+func newGnrtrCharLoop(s string) (l *charLoop, err error) {
 	prefix, comprehension, suffix, err := groupChar("{").Parts(s)
 	if err != nil {
 		return nil, err
@@ -78,9 +78,9 @@ func (cl charLoop) String() (s string) {
 }
 
 func (cl charLoop) Unique() Gnrtr {
-	return uniqueAlc(&cl)
+	return uniqueGnrtr(&cl)
 }
 
 func (cl charLoop) ToList() []string {
-	return alcToList(&cl)
+	return gnrtrToList(&cl)
 }

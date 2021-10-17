@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-func TestALCArray(t *testing.T) {
+func TestGnrtrArray(t *testing.T) {
 	var next string
 	var results []string
 	var done bool
-	myAlc := "test(ing||user|er)"
+	myGnrtr := "test(ing||user|er)"
 	myFuncName := "NewGnrtr(\"test(ing||user|er)\")"
-	myArray := gnrtr.NewGnrtr(myAlc)
+	myArray := gnrtr.NewGnrtr(myGnrtr)
 	if !assert.NotNil(t, myArray, "%s should return an array iterator", myFuncName) {
 		return
 	}

@@ -6,21 +6,21 @@ import (
 	"testing"
 )
 
-func TestALCIntLoop(t *testing.T) {
+func TestGnrtrIntLoop(t *testing.T) {
 	var next string
 	var results []string
 	var done bool
-	myAlc := "test{1..3}"
-	myArrayAlc := "test(1|2|3)"
-	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlc)
-	myLoop := NewGnrtr(myAlc)
+	myGnrtr := "test{1..3}"
+	myArrayGnrtr := "test(1|2|3)"
+	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myGnrtr)
+	myLoop := NewGnrtr(myGnrtr)
 	if !assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
 		return
 	}
-	assert.Equal(t, myLoop.String(), myAlc, "%s.String() should be \"%s\"", myFuncName, myAlc)
+	assert.Equal(t, myLoop.String(), myGnrtr, "%s.String() should be \"%s\"", myFuncName, myGnrtr)
 
-	assert.Equal(t, myArrayAlc, myLoop.ToArray().String(),
-		"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayAlc)
+	assert.Equal(t, myArrayGnrtr, myLoop.ToArray().String(),
+		"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayGnrtr)
 	for {
 		next, done = myLoop.Next()
 		if done {

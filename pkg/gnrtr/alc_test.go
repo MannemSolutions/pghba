@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-func TestALCLoopSub(t *testing.T) {
+func TestGnrtrLoopSub(t *testing.T) {
 	var next string
 	var results []string
 	var done bool
-	myAlcDef := "test(ing|{1..3})"
-	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myAlcDef)
-	myAlc := NewGnrtr(myAlcDef)
-	assert.NotNil(t, myAlc, "%s should return an iterator", myFuncName)
-	assert.Equal(t, myAlcDef, myAlc.String(), "%s.String() should be \"%s\"", myFuncName, myAlcDef)
-	mySortedArray := myAlc.Unique()
+	myGnrtrDef := "test(ing|{1..3})"
+	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myGnrtrDef)
+	myGnrtr := NewGnrtr(myGnrtrDef)
+	assert.NotNil(t, myGnrtr, "%s should return an iterator", myFuncName)
+	assert.Equal(t, myGnrtrDef, myGnrtr.String(), "%s.String() should be \"%s\"", myFuncName, myGnrtrDef)
+	mySortedArray := myGnrtr.Unique()
 
 	for {
 		next, done = mySortedArray.Next()
