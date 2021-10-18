@@ -6,36 +6,32 @@ import (
 )
 
 type charLoop struct {
-	prefix string
 	begin  byte
 	index  byte
 	end    byte
-	suffix string
 }
 
-func newGnrtrCharLoop(s string) (l *charLoop, err error) {
-	prefix, comprehension, suffix, err := groupChar("{").Parts(s)
-	if err != nil {
-		return nil, err
+func newCharLoop(s string) (l *charLoop, err error) {
+	if ! strings.Contains(s, "..") {
+		return nil, fmt.Errorf("invalid input to newIntLoop (should contain '..')")
+	}
+	parts  := strings.Split(s, "..")
+
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid format for character loop comprehension (should be {cStart..cEnd}, is %s)", s)
+	}
+	if len(parts[0]) != 1 {
+		return nil, fmt.Errorf("invalid format for character loop comprehension (cStart should be 1 character), is %s)", parts[0])
+	}
+	if len(parts[1]) != 1 {
+		return nil, fmt.Errorf("invalid format for character loop comprehension (cEnd should be 1 character), is %s)", parts[1])
 	}
 	l = &charLoop{
-		prefix: prefix,
-		suffix: suffix,
+		begin: []byte(parts[0])[0],
+		end: []byte(parts[1])[0],
 	}
-	csplit := strings.Split(comprehension, "..")
-	if len(csplit) != 2 {
-		return nil, fmt.Errorf("invalid format for character loop comprehension (should be {cStart..cEnd}, is %s)", comprehension)
-	}
-	if len(csplit[0]) != 1 {
-		return nil, fmt.Errorf("invalid format for character loop comprehension (cStart should be 1 character), is %s)", csplit[0])
-	}
-	if len(csplit[1]) != 1 {
-		return nil, fmt.Errorf("invalid format for character loop comprehension (cEnd should be 1 character), is %s)", csplit[1])
-	}
-	l.begin = []byte(csplit[0])[0]
-	l.end = []byte(csplit[1])[0]
 	if l.begin > l.end {
-		return nil, fmt.Errorf("invalid format for character loop comprehension (cStart should be before cEbd), is %s)", comprehension)
+		return nil, fmt.Errorf("invalid format for character loop comprehension (cStart should be before cEnd), is %s)", s)
 	}
 	l.index = l.begin
 	return l, nil
@@ -45,7 +41,7 @@ func (cl charLoop) Current() string {
 	if cl.index > cl.end+1 {
 		return ""
 	}
-	return fmt.Sprintf("%s%s%s", cl.prefix, string(cl.index-1), cl.suffix)
+	return string(cl.index-1)
 }
 
 func (cl *charLoop) Next() (next string, done bool) {
@@ -63,8 +59,6 @@ func (cl *charLoop) Reset() {
 
 func (cl charLoop) ToArray() (a array) {
 	a = array{
-		prefix: cl.prefix,
-		suffix: cl.suffix,
 		index:  int(cl.index - cl.begin),
 	}
 	for c := cl.begin; c <= cl.end; c++ {
@@ -74,7 +68,7 @@ func (cl charLoop) ToArray() (a array) {
 }
 
 func (cl charLoop) String() (s string) {
-	return fmt.Sprintf("%s{%s..%s}%s", cl.prefix, string(cl.begin), string(cl.end), cl.suffix)
+	return fmt.Sprintf("{%s..%s}", string(cl.begin), string(cl.end))
 }
 
 func (cl charLoop) Unique() Gnrtr {
