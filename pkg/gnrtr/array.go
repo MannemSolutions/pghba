@@ -26,7 +26,7 @@ func newArray(s string, ag subGnrtrs) (a *array, err error) {
 		index:  0,
 		allGnrtrs: ag,
 	}
-	a.currentRaw = fmt.Sprintf("%s", a.list[a.index])
+	a.currentRaw = a.list[a.index]
 	a.setCurrent()
 	return a, nil
 }
@@ -53,7 +53,7 @@ func (a *array) advanceSubGnrtrs() (done bool) {
 }
 
 func (a *array) rebuildSubGnrtrs() {
-	a.subGnrtrs = make(map[int]subGnrtr, 0)
+	a.subGnrtrs = make(map[int]subGnrtr)
 	reSubGenPlaceHolders := regexp.MustCompile(`\${(\d+)}`)
 	matches := reSubGenPlaceHolders.FindAllStringSubmatch(a.currentRaw, -1)
 	for _, match := range matches {
@@ -86,7 +86,7 @@ func (a *array) Next() (next string, done bool) {
 	if a.index >= len(a.list) {
 		return "", true
 	}
-	a.currentRaw = fmt.Sprintf("%s", a.list[a.index])
+	a.currentRaw = a.list[a.index]
 	a.rebuildSubGnrtrs()
 
 	return a.setCurrent(), false

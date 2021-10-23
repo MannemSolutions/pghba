@@ -91,7 +91,7 @@ func (g Gnrtr) String() (s string) {
 }
 
 func (g *Gnrtr) buildSubGnrtrs() {
-	g.subGnrtrs = make(map[int]subGnrtr, 0)
+	g.subGnrtrs = make(map[int]subGnrtr)
 	reSubGenPlaceHolders := regexp.MustCompile(`\${(\d+)}`)
 	matches := reSubGenPlaceHolders.FindAllStringSubmatch(g.raw, -1)
 	for _, match := range matches {
