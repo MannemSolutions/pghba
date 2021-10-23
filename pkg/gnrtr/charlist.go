@@ -83,9 +83,6 @@ func (cl *charList) String() (s string) {
 	return fmt.Sprintf("[%s]", string(cl.list))
 }
 
-func (cl charList) Unique() Gnrtr {
-	return uniqueGnrtr(&cl)
-}
 func (cl charList) ToList() []string {
-	return gnrtrToList(&cl)
+	return subGnrtrToList(&cl)
 }

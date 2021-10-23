@@ -3,7 +3,6 @@ package gnrtr
 import (
 	"fmt"
 	"strconv"
-	"strings"
 )
 
 type intLoop struct {
@@ -13,31 +12,28 @@ type intLoop struct {
 }
 
 func newIntLoop(s string) (l *intLoop, err error) {
-	if ! strings.Contains(s, "..") {
-		return nil, fmt.Errorf("invalid input to newIntLoop (should contain '..')")
+	match := reIntLoop.FindStringSubmatch(s)
+	if match == nil {
+		return nil, fmt.Errorf("invalid input to newIntLoop (should have form %s)", reIntLoop.String())
 	}
-	parts  := strings.Split(s, "..")
-
-	start, err := strconv.Atoi(parts[0])
+	l = &intLoop{}
+	l.begin, err = strconv.Atoi(match[1])
 	if err != nil {
-		return nil, fmt.Errorf("cannot convert start (%s..) to int in newIntLoop", parts[0])
+		return nil, fmt.Errorf("cannot convert start (%s..) to int in newIntLoop", match[0])
 	}
-	end, err := strconv.Atoi(parts[1])
+	l.end, err = strconv.Atoi(match[2])
 	if err != nil {
-		return nil, fmt.Errorf("cannot convert end (..%s) to int in newIntLoop", parts[1])
+		return nil, fmt.Errorf("cannot convert end (..%s) to int in newIntLoop", match[1])
 	}
-	return &intLoop{
-		begin: start,
-		end: end,
-		index:  0,
-	}, nil
+	l.Reset()
+	return l, nil
 }
 
 func (l intLoop) Current() string {
-	if l.index > l.end+1 {
+	if l.index > l.end {
 		return ""
 	}
-	return fmt.Sprintf("%d", l.index-1)
+	return fmt.Sprintf("%d", l.index)
 }
 
 func (l *intLoop) Next() (next string, done bool) {
@@ -63,12 +59,8 @@ func (l intLoop) ToArray() (a array) {
 	return a
 }
 
-func (l intLoop) Unique() Gnrtr {
-	return uniqueGnrtr(&l)
-}
-
 func (l intLoop) ToList() []string {
-	return gnrtrToList(&l)
+	return subGnrtrToList(&l)
 }
 
 func (l intLoop) String() (s string) {

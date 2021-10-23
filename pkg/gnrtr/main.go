@@ -1,5 +1,10 @@
 package gnrtr
 
+import (
+	"fmt"
+	"regexp"
+)
+
 /*
 This package is meant to easily define a list within an argument passed to hba.
 hba has an object Rules{}, which can use arguments in the gnrtr format and expand into multiple Rules.
@@ -37,3 +42,14 @@ The following is implemented:
 * intloop. Example: {1..99} (like in bash)
 
 */
+
+var (
+	reIntLoops = regexp.MustCompile(`{(\d+)..(\d+)}`)
+	reIntLoop = regexp.MustCompile(fmt.Sprintf("^%s$", reIntLoops.String()))
+	reCharLoops = regexp.MustCompile(`{(\S)..(\S)}`)
+	reCharLoop = regexp.MustCompile(fmt.Sprintf("^%s$", reCharLoops.String()))
+	reCharLists = regexp.MustCompile(`\[([^]]+)]`)
+	reCharList = regexp.MustCompile(fmt.Sprintf("^%s$", reCharLists.String()))
+	reArrays = regexp.MustCompile(`\(([^)]+)\)`)
+	reArray = regexp.MustCompile(fmt.Sprintf("^%s$", reArrays.String()))
+)

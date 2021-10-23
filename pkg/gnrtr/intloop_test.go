@@ -11,7 +11,7 @@ func TestGnrtrIntLoop(t *testing.T) {
 	var results []string
 	var done bool
 	myGnrtr := "test{1..3}"
-	myArrayGnrtr := "test(1|2|3)"
+	//myArrayGnrtr := "test(1|2|3)"
 	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myGnrtr)
 	myLoop := NewGnrtr(myGnrtr)
 	if !assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
@@ -19,8 +19,8 @@ func TestGnrtrIntLoop(t *testing.T) {
 	}
 	assert.Equal(t, myLoop.String(), myGnrtr, "%s.String() should be \"%s\"", myFuncName, myGnrtr)
 
-	assert.Equal(t, myArrayGnrtr, myLoop.ToArray().String(),
-		"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayGnrtr)
+	//assert.Equal(t, myArrayGnrtr, myLoop.ToArray().String(),
+	//	"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayGnrtr)
 	for {
 		next, done = myLoop.Next()
 		if done {

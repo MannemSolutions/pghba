@@ -15,10 +15,9 @@ func TestGnrtrLoopSub(t *testing.T) {
 	myGnrtr := NewGnrtr(myGnrtrDef)
 	assert.NotNil(t, myGnrtr, "%s should return an iterator", myFuncName)
 	assert.Equal(t, myGnrtrDef, myGnrtr.String(), "%s.String() should be \"%s\"", myFuncName, myGnrtrDef)
-	mySortedArray := myGnrtr.Unique()
 
 	for {
-		next, done = mySortedArray.Next()
+		next, done = myGnrtr.Next()
 		if done {
 			break
 		}

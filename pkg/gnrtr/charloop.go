@@ -2,7 +2,6 @@ package gnrtr
 
 import (
 	"fmt"
-	"strings"
 )
 
 type charLoop struct {
@@ -12,23 +11,14 @@ type charLoop struct {
 }
 
 func newCharLoop(s string) (l *charLoop, err error) {
-	if ! strings.Contains(s, "..") {
-		return nil, fmt.Errorf("invalid input to newIntLoop (should contain '..')")
+	match := reCharLoop.FindStringSubmatch(s)
+	if match == nil {
+		return nil, fmt.Errorf("invalid input to newIntLoop (should have form %s)", reCharLoop.String())
 	}
-	parts  := strings.Split(s, "..")
 
-	if len(parts) != 2 {
-		return nil, fmt.Errorf("invalid format for character loop comprehension (should be {cStart..cEnd}, is %s)", s)
-	}
-	if len(parts[0]) != 1 {
-		return nil, fmt.Errorf("invalid format for character loop comprehension (cStart should be 1 character), is %s)", parts[0])
-	}
-	if len(parts[1]) != 1 {
-		return nil, fmt.Errorf("invalid format for character loop comprehension (cEnd should be 1 character), is %s)", parts[1])
-	}
 	l = &charLoop{
-		begin: []byte(parts[0])[0],
-		end: []byte(parts[1])[0],
+		begin: []byte(match[1])[0],
+		end: []byte(match[2])[0],
 	}
 	if l.begin > l.end {
 		return nil, fmt.Errorf("invalid format for character loop comprehension (cStart should be before cEnd), is %s)", s)
@@ -71,10 +61,6 @@ func (cl charLoop) String() (s string) {
 	return fmt.Sprintf("{%s..%s}", string(cl.begin), string(cl.end))
 }
 
-func (cl charLoop) Unique() Gnrtr {
-	return uniqueGnrtr(&cl)
-}
-
 func (cl charLoop) ToList() []string {
-	return gnrtrToList(&cl)
+	return subGnrtrToList(&cl)
 }

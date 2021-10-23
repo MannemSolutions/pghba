@@ -31,10 +31,10 @@ func NewRules(rowNum int, connTypes string, databases string, users string, addr
 		return Rules{}, err
 	}
 	rules := Rules{
-		connTypes: gnrtr.NewGnrtr(connTypes).Unique(),
-		databases: gnrtr.NewGnrtr(databases).Unique(),
-		users:     gnrtr.NewGnrtr(users).Unique(),
-		addresses: gnrtr.NewGnrtr(addresses).Unique(),
+		connTypes: gnrtr.NewGnrtr(connTypes),
+		databases: gnrtr.NewGnrtr(databases),
+		users:     gnrtr.NewGnrtr(users),
+		addresses: gnrtr.NewGnrtr(addresses),
 		mask:      mask,
 		current: Rule{
 			rowNum:   rowNum,
