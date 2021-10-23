@@ -80,6 +80,7 @@ func (a *array) rebuildSubGnrtrs() {
 }
 
 func (a *array) setCurrent() string {
+	a.currentRaw = a.list[a.index]
 	a.current = a.currentRaw
 	for id, g := range a.subGnrtrs {
 		placeholder := fmt.Sprintf("${%d}", id)
@@ -123,7 +124,6 @@ func (a array) String() (s string) {
 func (a *array) Reset() {
 	// This does not reset the subItems...
 	a.index = 0
-	a.currentRaw = a.list[a.index]
 	a.setCurrent()
 }
 

@@ -134,11 +134,13 @@ func (g *Gnrtr) Next() (string, bool) {
 }
 
 func (g Gnrtr) ToArray() (a array) {
-	return array{
-		list: []string{g.raw},
+	a = array{
+		list: g.ToList(),
 		index: 0,
 		allGnrtrs: g.allGnrtrs,
 	}
+	a.setCurrent()
+	return a
 }
 
 func (g *Gnrtr) Reset() {
