@@ -7,9 +7,6 @@ import (
 )
 
 func TestGnrtrCharLoop(t *testing.T) {
-	var next string
-	var results []string
-	var done bool
 	myGnrtr := "test_{a..c}"
 	//myArrayGnrtr := "test_(a|b|c)"
 	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myGnrtr)
@@ -21,13 +18,7 @@ func TestGnrtrCharLoop(t *testing.T) {
 
 	//assert.Equal(t, myArrayGnrtr, myLoop.ToArray().String(),
 	//	"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayGnrtr)
-	for {
-		next, done = myLoop.Next()
-		if done {
-			break
-		}
-		results = append(results, next)
-	}
+	results := myLoop.ToList()
 	assert.Len(t, results, 3, "%s should return 3 elements", myFuncName)
 	assert.Contains(t, results, "test_a", "%s should return \"test_a\"", myFuncName)
 	assert.Contains(t, results, "test_c", "%s should return \"test_c\"", myFuncName)

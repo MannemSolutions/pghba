@@ -27,6 +27,14 @@ func newCharLoop(s string) (l *charLoop, err error) {
 	return l, nil
 }
 
+func (cl charLoop) Clone()  subGnrtr {
+	return &charLoop{
+		begin: cl.begin,
+		index: cl.index,
+		end: cl.end,
+	}
+}
+
 func (cl charLoop) Index() int {
 	return int(cl.index - cl.begin)
 }

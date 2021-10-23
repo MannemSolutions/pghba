@@ -29,6 +29,14 @@ func newIntLoop(s string) (l *intLoop, err error) {
 	return l, nil
 }
 
+func (l intLoop) Clone()  subGnrtr {
+	return &intLoop{
+		begin: l.begin,
+		index: l.index,
+		end: l.end,
+	}
+}
+
 func (l intLoop) Index() int {
 	return l.index
 }

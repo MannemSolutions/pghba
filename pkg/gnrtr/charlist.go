@@ -43,6 +43,13 @@ func newCharList(s string) (cl *charList, err error) {
 	return cl, nil
 }
 
+func (cl charList) Clone()  subGnrtr {
+	return &charList{
+		list: cl.list,
+		index: cl.index,
+	}
+}
+
 func (cl charList) Index() int {
 	return cl.index
 }

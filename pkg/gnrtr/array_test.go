@@ -7,22 +7,13 @@ import (
 )
 
 func TestGnrtrArray(t *testing.T) {
-	var next string
-	var results []string
-	var done bool
 	myGnrtr := "test(ing||user|er)"
 	myFuncName := "NewGnrtr(\"test(ing||user|er)\")"
 	myArray := gnrtr.NewGnrtr(myGnrtr)
 	if !assert.NotNil(t, myArray, "%s should return an array iterator", myFuncName) {
 		return
 	}
-	for {
-		next, done = myArray.Next()
-		if done {
-			break
-		}
-		results = append(results, next)
-	}
+	results := myArray.ToList()
 	assert.Len(t, results, 4, "%s should return 4 elements", myFuncName)
 	assert.Contains(t, results, "test", "%s should return \"test\"", myFuncName)
 	assert.Contains(t, results, "testing", "%s should return \"testing\"", myFuncName)

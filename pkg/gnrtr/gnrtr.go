@@ -66,6 +66,17 @@ func NewGnrtr(s string) (g Gnrtr) {
 	return g
 }
 
+func (g Gnrtr) Clone() subGnrtr {
+	clone := &Gnrtr{
+		index: g.index,
+		raw: g.raw,
+	}
+	for _, sg := range g.allGnrtrs {
+		clone.allGnrtrs = append(clone.allGnrtrs, sg.Clone())
+	}
+	return clone
+}
+
 func (g *Gnrtr) setCurrent() string {
 	g.current = g.raw
 	for i, sg := range g.subGnrtrs {

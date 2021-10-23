@@ -8,6 +8,7 @@ type subGnrtr interface{
        ToList() []string
        String() string
        Index() int
+       Clone() subGnrtr
 }
 
 type subGnrtrs []subGnrtr
@@ -15,11 +16,11 @@ type subGnrtrs []subGnrtr
 // SortedArray creates an array with sorted unique elements
 func subGnrtrToList(g subGnrtr) (l []string) {
        // Clone so we can reset
-       a := g.ToArray()
-       a.Reset()
+       clone := g.Clone()
+       clone.Reset()
        //Make unique
        for {
-              next, done := a.Next()
+              next, done := clone.Next()
               if done {
                      break
               }

@@ -31,6 +31,17 @@ func newArray(s string, ag subGnrtrs) (a *array, err error) {
 	return a, nil
 }
 
+func (a array) Clone() subGnrtr {
+	// This is a bit broken, since it does not clone allGnrtrs, but that already is done by Gnrtr.Clone() and should
+	// not be done multiple times because that would leave allGnrtrs out of sync across all arrays and the Gnrtr.
+	// Therefore not cloning here...
+	return &array{
+		list: a.list,
+		index: a.index,
+		allGnrtrs: a.allGnrtrs,
+	}
+}
+
 func (a array) Index()  int{
 	return a.index
 }
@@ -110,7 +121,9 @@ func (a array) String() (s string) {
 }
 
 func (a *array) Reset() {
+	// This does not reset the subItems...
 	a.index = 0
+	a.currentRaw = a.list[a.index]
 	a.setCurrent()
 }
 
