@@ -22,8 +22,8 @@ func newArray(s string, ag subGnrtrs) (a *array, err error) {
 		return nil, fmt.Errorf("invalid input to newArray (should have form %s)", reArray.String())
 	}
 	a = &array{
-		list:   strings.Split(match[1], "|"),
-		index:  0,
+		list:      strings.Split(match[1], "|"),
+		index:     0,
 		allGnrtrs: ag,
 	}
 	a.currentRaw = a.list[a.index]
@@ -36,13 +36,13 @@ func (a array) Clone() subGnrtr {
 	// not be done multiple times because that would leave allGnrtrs out of sync across all arrays and the Gnrtr.
 	// Therefore not cloning here...
 	return &array{
-		list: a.list,
-		index: a.index,
+		list:      a.list,
+		index:     a.index,
 		allGnrtrs: a.allGnrtrs,
 	}
 }
 
-func (a array) Index()  int{
+func (a array) Index() int {
 	return a.index
 }
 
@@ -129,8 +129,8 @@ func (a *array) Reset() {
 
 func (a array) ToArray() array {
 	return array{
-		index:  a.index,
-		list:   a.list,
+		index: a.index,
+		list:  a.list,
 	}
 }
 

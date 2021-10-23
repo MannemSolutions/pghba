@@ -6,8 +6,8 @@ import (
 )
 
 type charList struct {
-	list   []byte
-	index  int
+	list  []byte
+	index int
 }
 
 func newCharList(s string) (cl *charList, err error) {
@@ -19,22 +19,22 @@ func newCharList(s string) (cl *charList, err error) {
 		return nil, fmt.Errorf("cannot make an iterator of a negative character list (starting with ^)")
 	}
 	cl = &charList{
-		index:  0,
+		index: 0,
 	}
 	chars := match[1]
-	for i:=0;i<len(chars);i++ {
+	for i := 0; i < len(chars); i++ {
 		if i < len(chars)-1 {
 			if chars[i+1] == '-' {
 				start := chars[i]
 				end := chars[i+2]
-				if end<start {
+				if end < start {
 					return nil, fmt.Errorf("could not parse %s, %s should be before %s", s, string(start),
 						string(end))
 				}
-				for char:=start; char<=end;char++ {
+				for char := start; char <= end; char++ {
 					cl.list = append(cl.list, char)
 				}
-				i+=2
+				i += 2
 				continue
 			}
 		}
@@ -43,9 +43,9 @@ func newCharList(s string) (cl *charList, err error) {
 	return cl, nil
 }
 
-func (cl charList) Clone()  subGnrtr {
+func (cl charList) Clone() subGnrtr {
 	return &charList{
-		list: cl.list,
+		list:  cl.list,
 		index: cl.index,
 	}
 }
@@ -76,7 +76,7 @@ func (cl *charList) Reset() {
 
 func (cl *charList) ToArray() (a array) {
 	a = array{
-		index:  cl.index,
+		index: cl.index,
 	}
 	for i := 0; i < len(cl.list); i++ {
 		a.list = append(a.list, string([]byte{cl.list[i]}))

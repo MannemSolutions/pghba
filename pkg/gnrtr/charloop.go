@@ -5,9 +5,9 @@ import (
 )
 
 type charLoop struct {
-	begin  byte
-	index  byte
-	end    byte
+	begin byte
+	index byte
+	end   byte
 }
 
 func newCharLoop(s string) (l *charLoop, err error) {
@@ -18,7 +18,7 @@ func newCharLoop(s string) (l *charLoop, err error) {
 
 	l = &charLoop{
 		begin: []byte(match[1])[0],
-		end: []byte(match[2])[0],
+		end:   []byte(match[2])[0],
 	}
 	if l.begin > l.end {
 		return nil, fmt.Errorf("invalid format for character loop comprehension (cStart should be before cEnd), is %s)", s)
@@ -27,11 +27,11 @@ func newCharLoop(s string) (l *charLoop, err error) {
 	return l, nil
 }
 
-func (cl charLoop) Clone()  subGnrtr {
+func (cl charLoop) Clone() subGnrtr {
 	return &charLoop{
 		begin: cl.begin,
 		index: cl.index,
-		end: cl.end,
+		end:   cl.end,
 	}
 }
 
@@ -61,7 +61,7 @@ func (cl *charLoop) Reset() {
 
 func (cl charLoop) ToArray() (a array) {
 	a = array{
-		index:  int(cl.index - cl.begin),
+		index: int(cl.index - cl.begin),
 	}
 	for c := cl.begin; c <= cl.end; c++ {
 		a.list = append(a.list, string(c))

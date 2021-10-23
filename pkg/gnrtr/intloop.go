@@ -6,9 +6,9 @@ import (
 )
 
 type intLoop struct {
-	begin  int
-	index  int
-	end    int
+	begin int
+	index int
+	end   int
 }
 
 func newIntLoop(s string) (l *intLoop, err error) {
@@ -29,11 +29,11 @@ func newIntLoop(s string) (l *intLoop, err error) {
 	return l, nil
 }
 
-func (l intLoop) Clone()  subGnrtr {
+func (l intLoop) Clone() subGnrtr {
 	return &intLoop{
 		begin: l.begin,
 		index: l.index,
-		end: l.end,
+		end:   l.end,
 	}
 }
 
@@ -63,7 +63,7 @@ func (l *intLoop) Reset() {
 
 func (l intLoop) ToArray() (a array) {
 	a = array{
-		index:  l.index - l.begin,
+		index: l.index - l.begin,
 	}
 	for i := l.begin; i <= l.end; i++ {
 		a.list = append(a.list, fmt.Sprintf("%d", i))

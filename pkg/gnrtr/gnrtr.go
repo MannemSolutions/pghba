@@ -9,10 +9,10 @@ import (
 
 type Gnrtr struct {
 	subGnrtrs map[int]subGnrtr
-	index int
-	current    string
-	raw string
-	allGnrtrs  subGnrtrs
+	index     int
+	current   string
+	raw       string
+	allGnrtrs subGnrtrs
 }
 
 func NewGnrtr(s string) (g Gnrtr) {
@@ -51,7 +51,7 @@ func NewGnrtr(s string) (g Gnrtr) {
 		if matches == nil {
 			break
 		}
-		for _,match := range matches {
+		for _, match := range matches {
 			sg, err := newArray(match[0], g.allGnrtrs)
 			if err != nil {
 				panic(err)
@@ -69,7 +69,7 @@ func NewGnrtr(s string) (g Gnrtr) {
 func (g Gnrtr) Clone() subGnrtr {
 	clone := &Gnrtr{
 		index: g.index,
-		raw: g.raw,
+		raw:   g.raw,
 	}
 	for _, sg := range g.allGnrtrs {
 		clone.allGnrtrs = append(clone.allGnrtrs, sg.Clone())
@@ -118,7 +118,7 @@ func (g *Gnrtr) buildSubGnrtrs() {
 }
 
 func (g *Gnrtr) Next() (string, bool) {
-	g.index +=1
+	g.index += 1
 	if g.index == 0 {
 		return g.Current(), false
 	}
@@ -135,8 +135,8 @@ func (g *Gnrtr) Next() (string, bool) {
 
 func (g Gnrtr) ToArray() (a array) {
 	a = array{
-		list: g.ToList(),
-		index: 0,
+		list:      g.ToList(),
+		index:     0,
 		allGnrtrs: g.allGnrtrs,
 	}
 	a.setCurrent()
@@ -155,4 +155,3 @@ func (g *Gnrtr) Reset() {
 func (g Gnrtr) ToList() []string {
 	return subGnrtrToList(&g)
 }
-
