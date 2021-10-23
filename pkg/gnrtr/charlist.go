@@ -2,7 +2,6 @@ package gnrtr
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -12,48 +11,47 @@ type charList struct {
 }
 
 func newCharList(s string) (cl *charList, err error) {
-	if err != nil {
-		return nil, err
+	match := reCharList.FindStringSubmatch(s)
+	if match == nil {
+		return nil, fmt.Errorf("invalid input to newCharList (should have form %s)", reCharList.String())
 	}
-	if strings.HasPrefix(s, "^") {
+	if strings.HasPrefix(match[1], "^") {
 		return nil, fmt.Errorf("cannot make an iterator of a negative character list (starting with ^)")
 	}
 	cl = &charList{
 		index:  0,
 	}
-	if strings.HasSuffix(s, "-") {
-		cl.list = []byte("-")
-	}
-	if strings.HasPrefix(s, "-") {
-		cl.list = []byte("-")
-	}
-	re := regexp.MustCompile(`(-)?([^-]|([^-][-][^-]))*(-)?`)
-	matches := re.FindAllIndex([]byte(s), -1)
-	if matches == nil {
-		return &charList{}, fmt.Errorf("could not parse charList %s", s)
-	}
-	for _, match := range matches {
-		start := s[match[0]]
-		if match[1]-match[0] == 1 {
-			cl.list = append(cl.list, start)
-		} else if match[1]-match[0] == 3 {
-			end := s[match[0]+match[1]-1]
-			for c := start; c <= end; c++ {
-				cl.list = append(cl.list, c)
+	chars := match[1]
+	for i:=0;i<len(chars);i++ {
+		if i < len(chars)-1 {
+			if chars[i+1] == '-' {
+				start := chars[i]
+				end := chars[i+2]
+				if end<start {
+					return nil, fmt.Errorf("could not parse %s, %s should be before %s", s, string(start),
+						string(end))
+				}
+				for char:=start; char<=end;char++ {
+					cl.list = append(cl.list, char)
+				}
+				i+=2
+				continue
 			}
-		} else {
-			return &charList{}, fmt.Errorf("could not parse the %s part of %s", s[match[0]:match[1]],
-				s)
 		}
+		cl.list = append(cl.list, chars[i])
 	}
 	return cl, nil
 }
 
+func (cl charList) Index() int {
+	return cl.index
+}
+
 func (cl charList) Current() string {
-	if cl.index > len(cl.list) {
+	if cl.index >= len(cl.list) {
 		return ""
 	}
-	return string(cl.list[cl.index-1])
+	return string(cl.list[cl.index])
 }
 
 func (cl *charList) Next() (next string, done bool) {

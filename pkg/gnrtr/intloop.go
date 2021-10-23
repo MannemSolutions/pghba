@@ -29,6 +29,10 @@ func newIntLoop(s string) (l *intLoop, err error) {
 	return l, nil
 }
 
+func (l intLoop) Index() int {
+	return l.index
+}
+
 func (l intLoop) Current() string {
 	if l.index > l.end {
 		return ""

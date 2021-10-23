@@ -31,6 +31,10 @@ func newArray(s string, ag subGnrtrs) (a *array, err error) {
 	return a, nil
 }
 
+func (a array) Index()  int{
+	return a.index
+}
+
 func (a array) Current() string {
 	return a.current
 }
@@ -106,8 +110,8 @@ func (a array) String() (s string) {
 }
 
 func (a *array) Reset() {
-	a.current = ""
 	a.index = 0
+	a.setCurrent()
 }
 
 func (a array) ToArray() array {

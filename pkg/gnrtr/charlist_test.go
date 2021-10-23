@@ -11,8 +11,8 @@ func TestGnrtrCharList(t *testing.T) {
 	var next string
 	var results []string
 	var done bool
-	myGnrtr := "test_[abc]"
-	myArrayGnrtr := "test_(a|b|c)"
+	myGnrtr := "test_[ac-e]"
+	myArrayGnrtr := "test_(a|c|d|e)"
 	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myGnrtr)
 	myLoop := gnrtr.NewGnrtr(myGnrtr)
 	if !assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {

@@ -9,6 +9,7 @@ import (
 
 type Gnrtr struct {
 	subGnrtrs map[int]subGnrtr
+	index int
 	current    string
 	raw string
 	allGnrtrs  subGnrtrs
@@ -60,8 +61,7 @@ func NewGnrtr(s string) (g Gnrtr) {
 			g.allGnrtrs = append(g.allGnrtrs, sg)
 		}
 	}
-	g.buildSubGnrtrs()
-	g.setCurrent()
+	g.Reset()
 
 	return g
 }
@@ -72,6 +72,10 @@ func (g *Gnrtr) setCurrent() string {
 		g.current = strings.Replace(g.current, fmt.Sprintf("${%d}", i), sg.Current(), 1)
 	}
 	return g.current
+}
+
+func (g Gnrtr) Index() int {
+	return g.index
 }
 
 func (g Gnrtr) Current() string {
@@ -103,6 +107,10 @@ func (g *Gnrtr) buildSubGnrtrs() {
 }
 
 func (g *Gnrtr) Next() (string, bool) {
+	g.index +=1
+	if g.index == 0 {
+		return g.Current(), false
+	}
 	for i := range g.subGnrtrs {
 		if _, done := g.subGnrtrs[i].Next(); !done {
 			// This one still can move to the next
@@ -123,9 +131,12 @@ func (g Gnrtr) ToArray() (a array) {
 }
 
 func (g *Gnrtr) Reset() {
+	g.index = -1
 	for i := range g.allGnrtrs {
 		g.allGnrtrs[i].Reset()
 	}
+	g.buildSubGnrtrs()
+	g.setCurrent()
 }
 
 func (g Gnrtr) ToList() []string {

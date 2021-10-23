@@ -27,11 +27,15 @@ func newCharLoop(s string) (l *charLoop, err error) {
 	return l, nil
 }
 
+func (cl charLoop) Index() int {
+	return int(cl.index - cl.begin)
+}
+
 func (cl charLoop) Current() string {
-	if cl.index > cl.end+1 {
+	if cl.index > cl.end {
 		return ""
 	}
-	return string(cl.index-1)
+	return string(cl.index)
 }
 
 func (cl *charLoop) Next() (next string, done bool) {

@@ -7,6 +7,7 @@ type subGnrtr interface{
        Reset()
        ToList() []string
        String() string
+       Index() int
 }
 
 type subGnrtrs []subGnrtr
