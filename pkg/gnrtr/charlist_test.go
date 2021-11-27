@@ -1,8 +1,7 @@
-package gnrtr_test
+package gnrtr
 
 import (
 	"fmt"
-	"github.com/mannemsolutions/pghba/pkg/gnrtr"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -12,12 +11,12 @@ func TestGnrtrCharList(t *testing.T) {
 	myGnrtrStr := "test_[-acde-]"
 	myArrayGnrtr := "(test_-|test_a|test_c|test_d|test_e|test_-)"
 	myFuncName := fmt.Sprintf("NewGnrtr(\"%s\")", myGnrtr)
-	myLoop := gnrtr.NewGnrtr(myGnrtr)
+	myLoop := NewGnrtr(myGnrtr)
 	if !assert.NotNil(t, myLoop, "%s should return a loop iterator", myFuncName) {
 		return
 	}
 	assert.Equal(t, myGnrtrStr, myLoop.String(), "%s.String() should be \"%s\"", myFuncName, myGnrtrStr)
-	assert.Equal(t, myArrayGnrtr, myLoop.ToArray().String(),
+	assert.Equal(t, myArrayGnrtr, myLoop.toArray().String(),
 		"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayGnrtr)
 	results := myLoop.ToList()
 	assert.Len(t, results, 6, "%s should return 4 elements", myFuncName)

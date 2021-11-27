@@ -27,7 +27,7 @@ func newCharLoop(s string) (l *charLoop, err error) {
 	return l, nil
 }
 
-func (cl charLoop) Clone() subGnrtr {
+func (cl charLoop) clone() subGnrtr {
 	return &charLoop{
 		begin: cl.begin,
 		index: cl.index,
@@ -59,7 +59,7 @@ func (cl *charLoop) Reset() {
 	cl.index = cl.begin
 }
 
-func (cl charLoop) ToArray() (a array) {
+func (cl charLoop) toArray() (a array) {
 	a = array{
 		index: int(cl.index - cl.begin),
 	}

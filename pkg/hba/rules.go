@@ -9,10 +9,10 @@ Objects of this type can be used as a reader, getting one rule at a time.
 */
 
 type Rules struct {
-	connTypes gnrtr.Gnrtr
-	databases gnrtr.Gnrtr
-	users     gnrtr.Gnrtr
-	addresses gnrtr.Gnrtr
+	connTypes *gnrtr.Gnrtr
+	databases *gnrtr.Gnrtr
+	users     *gnrtr.Gnrtr
+	addresses *gnrtr.Gnrtr
 	mask      string
 	current   Rule
 }
@@ -25,12 +25,12 @@ type Rules struct {
 //
 //}
 
-func NewRules(rowNum int, connTypes string, databases string, users string, addresses string, mask string, method string, options string) (Rules, error) {
+func NewRules(rowNum int, connTypes string, databases string, users string, addresses string, mask string, method string, options string) (*Rules, error) {
 	opts, _, err := NewOptionsFromString(options)
 	if err != nil {
-		return Rules{}, err
+		return nil, err
 	}
-	rules := Rules{
+	rules := &Rules{
 		connTypes: gnrtr.NewGnrtr(connTypes),
 		databases: gnrtr.NewGnrtr(databases),
 		users:     gnrtr.NewGnrtr(users),

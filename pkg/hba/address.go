@@ -11,14 +11,14 @@ import (
 type AddressType int
 
 const (
-	AddressTypeIpV4 AddressType = iota
+	AddressTypeUnknown AddressType = iota
+	AddressTypeIpV4
 	AddressTypeIpV6
 	AddressTypeHostName
 	AddressTypeDomain
 	AddressTypeAll
 	AddressTypeSameHost
 	AddressTypeSameNet
-	AddressTypeUnknown
 )
 
 func aTypeFromIP(ip net.IP) AddressType {
@@ -166,19 +166,55 @@ func (a *Address) SetMask(mask string) error {
 	if a.aType != AddressTypeIpV4 && a.aType != AddressTypeIpV6 {
 		return fmt.Errorf("cannot set mask on something other then ipv4 or ipv6 mask")
 	}
-	if !a.ip.IsUnspecified() {
+	if a.ip.IsUnspecified() {
 		return fmt.Errorf("cannot apply mask %s to address that is not ip %s", mask, a.str)
 	}
+	var size = -1
 	// use ParseIP to find ou the bytes
-	m := net.ParseIP(mask)
-	if m == nil {
-		return fmt.Errorf("%s is not a valid mask", mask)
+	if mask == "" {
+		if a.aType == AddressTypeIpV4 {
+			size = 32
+		} else {
+			size = 128
+		}
+	} else if i, err := strconv.Atoi(mask); err != nil {
+		var maxSize int
+		if a.aType == AddressTypeIpV4 {
+			maxSize = 32
+		} else {
+			maxSize = 128
+		}
+		if size > maxSize {
+			return fmt.Errorf("invalid prefix %s (too large)", mask)
+		}
+		size = i
 	}
-	mType := aTypeFromIP(m)
-	if mType != a.aType {
-		return fmt.Errorf("ip %s and mask %s are not same version (one is ipv4 and other is ipv6)", a.ip.String(), mask)
+	if size >= 0 {
+		a.ipNet = &net.IPNet{
+			IP: a.ip,
+			Mask: net.CIDRMask(size, size),
+		}
+		return nil
 	}
-	return nil
+	if a.aType == AddressTypeIpV4 && strings.Count(mask, ".") == 4 {
+		var parts [4]byte
+		for i, part := range strings.Split(mask, ".") {
+			b, err := strconv.Atoi(part)
+			if err != nil {
+				return fmt.Errorf("invalid ipv4 part '%s' in (*Address).SetMask(string), %e", part, err)
+			}
+			if b < 0 || b > 255 {
+				return fmt.Errorf("invalid ipv4 part '%s' in (*Address).SetMask(string), %e", part, err)
+			}
+			parts[i] = byte(b)
+		}
+		a.ipNet = &net.IPNet{
+			IP: a.ip,
+			Mask: net.IPMask{parts[0], parts[1], parts[2], parts[3]},
+		}
+		return nil
+	}
+	return fmt.Errorf("mask %s is not a valid netmask", mask)
 }
 
 func (a Address) Unset() bool {

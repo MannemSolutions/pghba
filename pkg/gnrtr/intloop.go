@@ -29,7 +29,7 @@ func newIntLoop(s string) (l *intLoop, err error) {
 	return l, nil
 }
 
-func (l intLoop) Clone() subGnrtr {
+func (l intLoop) clone() subGnrtr {
 	return &intLoop{
 		begin: l.begin,
 		index: l.index,
@@ -61,7 +61,7 @@ func (l *intLoop) Reset() {
 	l.index = l.begin
 }
 
-func (l intLoop) ToArray() (a array) {
+func (l intLoop) toArray() (a array) {
 	a = array{
 		index: l.index - l.begin,
 	}

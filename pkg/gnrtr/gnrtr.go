@@ -2,6 +2,7 @@ package gnrtr
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -15,8 +16,10 @@ type Gnrtr struct {
 	allGnrtrs subGnrtrs
 }
 
-func NewGnrtr(s string) (g Gnrtr) {
-	g.raw = s
+func NewGnrtr(s string) (g *Gnrtr) {
+	g = &Gnrtr{
+		raw: s,
+	}
 	for _, match := range reIntLoops.FindAllStringSubmatch(g.raw, -1) {
 		sg, err := newIntLoop(match[0])
 		if err != nil {
@@ -66,21 +69,38 @@ func NewGnrtr(s string) (g Gnrtr) {
 	return g
 }
 
-func (g Gnrtr) Clone() subGnrtr {
+func (g Gnrtr) clone() subGnrtr {
 	clone := &Gnrtr{
 		index: g.index,
 		raw:   g.raw,
 	}
 	for _, sg := range g.allGnrtrs {
-		clone.allGnrtrs = append(clone.allGnrtrs, sg.Clone())
+		clone.allGnrtrs = append(clone.allGnrtrs, sg.clone())
 	}
 	return clone
 }
 
 func (g *Gnrtr) setCurrent() string {
 	g.current = g.raw
-	for i, sg := range g.subGnrtrs {
-		g.current = strings.Replace(g.current, fmt.Sprintf("${%d}", i), sg.Current(), 1)
+
+	for {
+		matches := rePlaceholders.FindAllStringSubmatch(g.current, -1)
+		if len(matches) == 0 {
+			break
+		}
+		newValue := g.current
+		for _, match := range matches {
+			i, err := strconv.Atoi(match[1])
+			if err != nil {
+				// This should not be possible!!!
+				log.Panicf("cannot parse %s to int (%s) in (g *Gnrtr).setCurrent()", match[1], err.Error())
+			}
+			sg := g.allGnrtrs[i]
+			g.current = strings.Replace(g.current, match[0], sg.Current(), 1)
+		}
+		if g.current == newValue {
+			log.Panicf("We seem to be in a deadloop here. File a bug with the exact call to the executable.")
+		}
 	}
 	return g.current
 }
@@ -133,7 +153,7 @@ func (g *Gnrtr) Next() (string, bool) {
 	return g.Current(), true
 }
 
-func (g Gnrtr) ToArray() (a array) {
+func (g Gnrtr) toArray() (a array) {
 	a = array{
 		list:      g.ToList(),
 		index:     0,
@@ -152,6 +172,6 @@ func (g *Gnrtr) Reset() {
 	g.setCurrent()
 }
 
-func (g Gnrtr) ToList() []string {
-	return subGnrtrToList(&g)
+func (g *Gnrtr) ToList() []string {
+	return subGnrtrToList(g)
 }

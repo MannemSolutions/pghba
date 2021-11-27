@@ -43,7 +43,7 @@ func newCharList(s string) (cl *charList, err error) {
 	return cl, nil
 }
 
-func (cl charList) Clone() subGnrtr {
+func (cl charList) clone() subGnrtr {
 	return &charList{
 		list:  cl.list,
 		index: cl.index,
@@ -74,7 +74,7 @@ func (cl *charList) Reset() {
 	cl.index = 0
 }
 
-func (cl *charList) ToArray() (a array) {
+func (cl *charList) toArray() (a array) {
 	a = array{
 		index: cl.index,
 	}

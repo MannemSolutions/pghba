@@ -16,7 +16,7 @@ func TestGnrtrIntLoop(t *testing.T) {
 	}
 	assert.Equal(t, myLoop.String(), myGnrtr, "%s.String() should be \"%s\"", myFuncName, myGnrtr)
 
-	assert.Equal(t, myArrayGnrtr, myLoop.ToArray().String(),
+	assert.Equal(t, myArrayGnrtr, myLoop.toArray().String(),
 		"%s.ToArray().String() should be \"%s\"", myFuncName, myArrayGnrtr)
 	results := myLoop.ToList()
 	assert.Len(t, results, 3, "%s should return 3 elements", myFuncName)

@@ -98,7 +98,7 @@ func (f *File) DeleteRule(r Rule) (found bool) {
 	return found
 }
 
-func (f *File) DeleteRules(rs Rules) (found bool, err error) {
+func (f *File) DeleteRules(rs *Rules) (found bool, err error) {
 	for {
 		next, done, err := rs.Next()
 		if done {
@@ -148,7 +148,7 @@ func (f *File) AddRule(r Rule, auto bool) (found bool) {
 	return false
 }
 
-func (f *File) AddRules(rs Rules, auto bool) (found bool, err error) {
+func (f *File) AddRules(rs *Rules, auto bool) (found bool, err error) {
 	for {
 		next, done, err := rs.Next()
 		if done {

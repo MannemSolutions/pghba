@@ -44,12 +44,13 @@ The following is implemented:
 */
 
 var (
-	reIntLoops  = regexp.MustCompile(`{(\d+)..(\d+)}`)
-	reIntLoop   = regexp.MustCompile(fmt.Sprintf("^%s$", reIntLoops.String()))
-	reCharLoops = regexp.MustCompile(`{(\S)..(\S)}`)
-	reCharLoop  = regexp.MustCompile(fmt.Sprintf("^%s$", reCharLoops.String()))
-	reCharLists = regexp.MustCompile(`\[([^]]+)]`)
-	reCharList  = regexp.MustCompile(fmt.Sprintf("^%s$", reCharLists.String()))
-	reArrays    = regexp.MustCompile(`\(([^)]+)\)`)
-	reArray     = regexp.MustCompile(fmt.Sprintf("^%s$", reArrays.String()))
+	reIntLoops     = regexp.MustCompile(`{(\d+)..(\d+)}`)
+	reIntLoop      = regexp.MustCompile(fmt.Sprintf("^%s$", reIntLoops.String()))
+	reCharLoops    = regexp.MustCompile(`{(\S)..(\S)}`)
+	reCharLoop     = regexp.MustCompile(fmt.Sprintf("^%s$", reCharLoops.String()))
+	reCharLists    = regexp.MustCompile(`\[([^]]+)]`)
+	reCharList     = regexp.MustCompile(fmt.Sprintf("^%s$", reCharLists.String()))
+	reArrays       = regexp.MustCompile(`\(([^)]+)\)`)
+	reArray        = regexp.MustCompile(fmt.Sprintf("^%s$", reArrays.String()))
+	rePlaceholders = regexp.MustCompile(`\$\{([0-9]+)\}`)
 )

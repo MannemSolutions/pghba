@@ -31,7 +31,7 @@ func newArray(s string, ag subGnrtrs) (a *array, err error) {
 	return a, nil
 }
 
-func (a array) Clone() subGnrtr {
+func (a array) clone() subGnrtr {
 	// This is a bit broken, since it does not clone allGnrtrs, but that already is done by Gnrtr.Clone() and should
 	// not be done multiple times because that would leave allGnrtrs out of sync across all arrays and the Gnrtr.
 	// Therefore not cloning here...
@@ -127,7 +127,7 @@ func (a *array) Reset() {
 	a.setCurrent()
 }
 
-func (a array) ToArray() array {
+func (a array) toArray() array {
 	return array{
 		index: a.index,
 		list:  a.list,
