@@ -26,19 +26,17 @@ func NewRule(rowNum int, connType string, database string, user string, address 
 	if err != nil {
 		return Rule{}, err
 	}
-	if mask != "" {
-		err = addr.SetMask(mask)
-		if err != nil {
-			return Rule{}, err
-		}
+	err = addr.SetMask(mask)
+	if err != nil {
+		return Rule{}, err
 	}
 	opts, _, err := NewOptionsFromString(options)
 	if err != nil {
 		return Rule{}, err
 	}
 
-	if ct == ConnTypeUnknown || mtd == MethodUnknown {
-		return Rule{}, fmt.Errorf("new Rule has an invalid connection type (%s) or method (%s)", connType, method)
+	if (ct == ConnTypeUnknown) || (mtd == MethodUnknown) {
+		return Rule{}, fmt.Errorf("new Rule has an invalid connection type %s (%s) or method (%s)", connType, ct, method)
 	}
 	return Rule{
 		rowNum:   rowNum,
@@ -50,6 +48,7 @@ func NewRule(rowNum int, connType string, database string, user string, address 
 		options:  opts,
 	}, nil
 }
+
 func NewRuleFromLine(line string) (Rule, error) {
 	var address, db string
 	var r Rule
@@ -175,6 +174,16 @@ func (r Rule) Comments() (com Comments) {
 func (r Rule) Less(l Line) (less bool) {
 	return r.Compare(l) < 0
 }
+
+func (r Rule) SortByRowNum(l Line) (less bool) {
+	if r.rowNum != l.RowNum() {
+		return r.rowNum - l.RowNum() < 0
+	}
+	return r.Compare(l) < 0
+}
+
+
+
 
 func (r *Rule) SetRowNum(rowNum int) {
 	r.rowNum = rowNum

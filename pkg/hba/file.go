@@ -98,26 +98,21 @@ func (f *File) DeleteRule(r Rule) (found bool) {
 	return found
 }
 
-func (f *File) DeleteRules(rs *Rules) (found bool, err error) {
-	for {
-		next, done, err := rs.Next()
-		if done {
-			return found, nil
-		}
-		if err != nil {
-			return found, err
-		}
-		found = found || f.DeleteRule(next)
+func (f *File) DeleteRules(rs *Rules) (found bool) {
+	for _, r := range rs.rules {
+		found = found || f.DeleteRule(r)
 	}
+	return found
 }
 
-func (f File) InsertRule(r Rule, index int) {
-	lines := append(f.lines[:index], r)
-	f.lines = append(lines, f.lines[index:]...)
+func (f *File) InsertRule(r Rule, index int) {
+	f.lines = append(f.lines[:index+1], f.lines[index:]...)
+	f.lines[index+1] = r
 	f.renumberRules()
+	log.Debugf("Insert rule %s on line %d. Lines: %d", r.String(), index, len(f.lines))
 }
 
-func (f *File) AddRule(r Rule, auto bool) (found bool) {
+func (f *File) AddRule(r Rule, auto bool) (changed bool) {
 	if !auto {
 		log.Debugf("Adding rule %s (manual)", r.String())
 		for i, line := range f.lines {
@@ -134,7 +129,10 @@ func (f *File) AddRule(r Rule, auto bool) (found bool) {
 			if !isRule {
 				continue
 			}
-			if rule.Less(r) {
+			cmp := r.Compare(rule)
+			if cmp == 0 {
+				return false
+			} else if cmp < 0 {
 				f.InsertRule(r, i)
 				f.dirty = true
 				return true
@@ -145,21 +143,16 @@ func (f *File) AddRule(r Rule, auto bool) (found bool) {
 	f.lines = append(f.lines, r)
 	f.renumberRules()
 	f.dirty = true
-	return false
+	return true
 }
 
-func (f *File) AddRules(rs *Rules, auto bool) (found bool, err error) {
-	for {
-		next, done, err := rs.Next()
-		if done {
-			return found, nil
-		}
-		if err != nil {
-			return found, err
-		}
+func (f *File) AddRules(rs Rules, auto bool) (changed bool) {
+	log.Debugf("Count rules: %d", len(rs.rules))
+	for _, r := range rs.rules {
 		// First run AddRule and then add to found, or AddRule will not be run when found is true
-		found = f.AddRule(next, auto) || found
+		changed = f.AddRule(r, auto) || changed
 	}
+	return changed
 }
 
 func (f *File) Save(force bool) error {

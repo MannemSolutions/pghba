@@ -54,6 +54,8 @@ type Address struct {
 	aType AddressType
 }
 
+type Addresses []Address
+
 func NewAddress(addr string) (a Address, err error) {
 	a.str = addr
 	if strings.Contains(addr, "/") {

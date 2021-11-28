@@ -14,8 +14,6 @@ type Line interface {
 	RowNum() int
 }
 
-type Lines []Line
-
 type EmptyLine string
 
 func NewEmptyLine(line string) (EmptyLine, error) {
@@ -49,3 +47,6 @@ func (e EmptyLine) Compare(Line) int {
 func (e EmptyLine) RowNum() int {
 	return 0
 }
+
+type Lines []Line
+

@@ -11,7 +11,6 @@ type array struct {
 	list       []string
 	index      int
 	allGnrtrs  subGnrtrs
-	subGnrtrs  map[int]subGnrtr
 	current    string
 	currentRaw string
 }
@@ -51,8 +50,9 @@ func (a array) Current() string {
 }
 
 func (a *array) advanceSubGnrtrs() (done bool) {
-	for i := range a.subGnrtrs {
-		sg := a.subGnrtrs[i]
+	sgs := a.subGnrtrs()
+	for i := range sgs {
+		sg := sgs[i]
 		if _, done := sg.Next(); !done {
 			// This one still can move to the next
 			return true
@@ -63,8 +63,7 @@ func (a *array) advanceSubGnrtrs() (done bool) {
 	return false
 }
 
-func (a *array) rebuildSubGnrtrs() {
-	a.subGnrtrs = make(map[int]subGnrtr)
+func (a *array) subGnrtrs() (sg subGnrtrs) {
 	reSubGenPlaceHolders := regexp.MustCompile(`\${(\d+)}`)
 	matches := reSubGenPlaceHolders.FindAllStringSubmatch(a.currentRaw, -1)
 	for _, match := range matches {
@@ -75,14 +74,15 @@ func (a *array) rebuildSubGnrtrs() {
 		if gnrtrId >= len(a.allGnrtrs) {
 			panic(fmt.Errorf("a placeholder references a non existing subGnrtr"))
 		}
-		a.subGnrtrs[gnrtrId] = a.allGnrtrs[gnrtrId]
+		sg = append(sg, a.allGnrtrs[gnrtrId])
 	}
+	return sg
 }
 
 func (a *array) setCurrent() string {
 	a.currentRaw = a.list[a.index]
 	a.current = a.currentRaw
-	for id, g := range a.subGnrtrs {
+	for id, g := range a.subGnrtrs() {
 		placeholder := fmt.Sprintf("${%d}", id)
 		a.current = strings.Replace(a.current, placeholder, g.Current(), -1)
 	}
@@ -99,7 +99,6 @@ func (a *array) Next() (next string, done bool) {
 		return "", true
 	}
 	a.currentRaw = a.list[a.index]
-	a.rebuildSubGnrtrs()
 
 	return a.setCurrent(), false
 }
