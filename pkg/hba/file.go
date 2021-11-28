@@ -157,7 +157,8 @@ func (f *File) AddRules(rs *Rules, auto bool) (found bool, err error) {
 		if err != nil {
 			return found, err
 		}
-		found = found || f.AddRule(next, auto)
+		// First run AddRule and then add to found, or AddRule will not be run when found is true
+		found = f.AddRule(next, auto) || found
 	}
 }
 
