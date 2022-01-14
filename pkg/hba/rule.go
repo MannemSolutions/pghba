@@ -17,27 +17,27 @@ type Rule struct {
 	options  Options
 }
 
-func NewRule(rowNum int, connType string, database string, user string, address string, mask string, method string, options string) (Rule, error) {
+func NewRule(rowNum int, connType string, database string, user string, address string, mask string, method string, options string) (r Rule, err error) {
+	var addr Address
 	ct := NewConnType(connType)
 	mtd := NewMethod(method)
 	db := Database(database)
 	usr := User(user)
-	addr, err := NewAddress(address)
-	if err != nil {
-		return Rule{}, err
-	}
-	err = addr.SetMask(mask)
-	if err != nil {
-		return Rule{}, err
+	if ct != ConnTypeLocal && ct != ConnTypeUnknown {
+		addr, err = NewAddress(address)
+		if err != nil {
+			return Rule{}, err
+		}
+		err = addr.SetMask(mask)
+		if err != nil {
+			return Rule{}, err
+		}
 	}
 	opts, _, err := NewOptionsFromString(options)
 	if err != nil {
 		return Rule{}, err
 	}
 
-	if (ct == ConnTypeUnknown) || (mtd == MethodUnknown) {
-		return Rule{}, fmt.Errorf("new Rule has an invalid connection type %s (%s) or method (%s)", connType, ct, method)
-	}
 	return Rule{
 		rowNum:   rowNum,
 		connType: ct,
@@ -117,6 +117,24 @@ func (r *Rule) PrependComments(comments Comments) {
 	r.comments = append(comments, r.comments...)
 }
 
+func (r Rule) Contains(other Rule) bool {
+	if r.database != "" && r.database.Compare(other.database) != 0 {
+		return false
+	}
+	if r.user != "" && r.user.Compare(other.user) != 0 {
+		return false
+	}
+	if r.connType != ConnTypeUnknown {
+		if r.connType.Compare(other.connType) != 0 {
+			return false
+		}
+		if r.connType != ConnTypeLocal && other.connType != ConnTypeLocal {
+			return r.address.Contains(other.address)
+		}
+	}
+	return true
+}
+
 func (r Rule) Compare(other Line) (comparison int) {
 	o, ok := other.(Rule)
 	if !ok {
@@ -132,8 +150,8 @@ func (r Rule) Compare(other Line) (comparison int) {
 	if comparison = r.user.Compare(o.user); comparison != 0 {
 		return comparison
 	}
-	if comparison = r.address.Compare(o.address); comparison != 0 {
-		if o.connType != ConnTypeLocal {
+	if o.connType != ConnTypeLocal {
+		if comparison = r.address.Compare(o.address); comparison != 0 {
 			return comparison
 		}
 	}

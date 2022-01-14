@@ -26,7 +26,7 @@ func (at AddressType) Weight() int {
 	if at == AddressTypeUnknown {
 		return int(AddressTypeSameNet) - int(AddressTypeUnknown) + 1
 	} else {
-		return int(AddressTypeSameNet) - int(AddressTypeUnknown)
+		return int(at) - int(AddressTypeUnknown)
 	}
 }
 
@@ -181,6 +181,9 @@ func (a Address) String() string {
 
 func (a *Address) SetMask(mask string) error {
 	if a.aType != AddressTypeIpV4 && a.aType != AddressTypeIpV6 {
+		if mask == "" {
+			return nil
+		}
 		return fmt.Errorf("cannot set mask on something other then ipv4 or ipv6 mask")
 	}
 	if a.ip.IsUnspecified() {
@@ -246,7 +249,34 @@ func (a Address) Clone() Address {
 		aType: a.aType,
 	}
 }
+func (a Address) Contains(other Address) bool {
+	switch a.aType {
+	case AddressTypeUnknown:
+		return a.aType == other.aType
+	case AddressTypeIpV4, AddressTypeIpV6:
+		if a.aType == other.aType {
+			return a.ipNet.Contains(other.ipNet.IP)
+		}
+	case AddressTypeSameHost:
+		return a.aType == other.aType
+	case AddressTypeSameNet:
+		return other.aType == AddressTypeSameHost || other.aType == AddressTypeSameNet
+	case AddressTypeHostName:
+		// with delete command, hostname can be set to "" which means all hosts
+		return a.str == "" || a.aType == other.aType && a.str == other.str
+	case AddressTypeDomain:
+		return (other.aType == other.aType || other.aType == AddressTypeHostName) && strings.HasSuffix(other.str, a.str)
+	case AddressTypeAll:
+		return a.aType == other.aType
+	}
+	return false
+}
+
 func (a Address) Compare(other Address) int {
+	if a.aType == AddressTypeUnknown || other.aType == AddressTypeUnknown {
+		// For delete command. If it is an unknown address type, make it equal to all addresses
+		return 0
+	}
 	if a.aType != other.aType {
 		return a.aType.Weight() - other.aType.Weight()
 	}

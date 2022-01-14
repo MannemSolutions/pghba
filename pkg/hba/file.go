@@ -22,7 +22,7 @@ func NewFile(path string) File {
 // Renumber all rules in the .lines sub value.
 // Not all lines are rules, and we want to number all rules consistently.
 // And know how many rules are there in the lines.
-func (f File) renumberRules() {
+func (f *File) renumberRules() {
 	for i, line := range f.lines {
 		rule, isRule := line.(Rule)
 		if !isRule {
@@ -30,10 +30,11 @@ func (f File) renumberRules() {
 		}
 		f.numRules = i + 1
 		rule.SetRowNum(f.numRules)
+		f.lines[i] = rule
 	}
 }
 
-func (f File) Read() error {
+func (f *File) Read() error {
 	var commentBlock Comments
 	file, err := os.Open(f.path)
 	if err != nil {
@@ -63,6 +64,7 @@ func (f File) Read() error {
 		if err == nil {
 			r.PrependComments(commentBlock)
 			commentBlock = Comments{}
+			lines = append(lines, r)
 			continue
 		}
 		return fmt.Errorf("could not parse this hba line %s", line)
@@ -75,21 +77,30 @@ func (f File) Read() error {
 		return err
 	}
 	f.lines = lines
+	f.dirty = true
 	f.renumberRules()
 	return nil
 }
 
 func (f *File) DeleteRule(r Rule) (found bool) {
-	for i, line := range f.lines {
-		rule, isRule := line.(Rule)
-		if !isRule {
-			continue
+	var i = 0
+	for {
+		if i >= len(f.lines) {
+			break
 		}
-		if rule.Compare(r) == 0 {
+		if rule, isRule := f.lines[i].(Rule); !isRule {
+			log.Debugf("Not a rule %s", f.lines[i].String())
+			i+=1
+			continue
+		} else if r.Contains(rule) {
+			log.Debugf("Removing rule %s", rule.String())
 			f.lines = append(f.lines[:i], f.lines[i+1:]...)
 			found = true
 			f.dirty = true
 			f.numRules -= 1
+		} else {
+			i+=1
+			log.Debugf("Leaving rule %s", rule.String())
 		}
 	}
 	if found {
@@ -100,7 +111,8 @@ func (f *File) DeleteRule(r Rule) (found bool) {
 
 func (f *File) DeleteRules(rs *Rules) (found bool) {
 	for _, r := range rs.rules {
-		found = found || f.DeleteRule(r)
+		log.Debugf("Cleaning rule %s", r.String())
+		found = f.DeleteRule(r) || found
 	}
 	return found
 }

@@ -23,7 +23,17 @@ var (
 		"hostnogssenc": ConnTypeHostNoGssEnc,
 	}
 	fromConnType = map[ConnType]string{}
+	allConnTypes []string
 )
+
+func AllConnTypes() (all []string){
+	if len(allConnTypes) == 0 {
+		for ct := range toConnType {
+			allConnTypes = append(allConnTypes, ct)
+		}
+	}
+	return allConnTypes
+}
 
 func NewConnType(str string) (ct ConnType) {
 	if ct, exists := toConnType[str]; exists {
