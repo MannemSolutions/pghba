@@ -133,7 +133,9 @@ func (r Rule) Compare(other Line) (comparison int) {
 		return comparison
 	}
 	if comparison = r.address.Compare(o.address); comparison != 0 {
-		return comparison
+		if o.connType != ConnTypeLocal {
+			return comparison
+		}
 	}
 	return 0
 }

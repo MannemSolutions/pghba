@@ -21,4 +21,5 @@ lint:
 	golangci-lint run
 
 unittest:
+	./test.sh
 	find . -name '*_test.go' | while read f; do dirname $$f; done | sort -u | while read d; do go test $$d; done
