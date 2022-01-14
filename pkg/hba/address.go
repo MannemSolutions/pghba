@@ -1,6 +1,7 @@
 package hba
 
 import (
+	"bytes"
 	"fmt"
 	"math/bits"
 	"net"
@@ -20,6 +21,14 @@ const (
 	AddressTypeSameHost
 	AddressTypeSameNet
 )
+
+func (at AddressType) Weight() int {
+	if at == AddressTypeUnknown {
+		return int(AddressTypeSameNet) - int(AddressTypeUnknown) + 1
+	} else {
+		return int(AddressTypeSameNet) - int(AddressTypeUnknown)
+	}
+}
 
 func aTypeFromIP(ip net.IP) AddressType {
 	s := ip.String()
@@ -123,22 +132,28 @@ func (a Address) NetworkSize() (uint, error) {
 	}
 }
 
-func (a Address) Weight() (uint, error) {
+func (a Address) Weight() int {
 	switch a.aType {
 	case AddressTypeIpV4, AddressTypeIpV6:
 		if a.ipNet.IP.IsUnspecified() {
-			return 0, nil
+			return 0
 		}
-		return sizeFromNet(a.ipNet.Mask)
+		size, err := sizeFromNet(a.ipNet.Mask)
+		if err != nil {
+			log.Errorf("Could not get weight of address %s, sorting at the end of the file", a.ipNet.String())
+			return -1
+		}
+		return int(size)
 	case AddressTypeHostName, AddressTypeSameHost:
-		return 0, nil
+		return 0
 	case AddressTypeAll:
-		return 128, nil
+		return 128
 	case AddressTypeDomain, AddressTypeSameNet:
 		// Assumption, but this corresponds to a /24 network
-		return 32, nil
+		return 32
 	default:
-		return 0, fmt.Errorf("cannot read weight from an address with an unknown type")
+		// This should not occur. Sort all the way at the bottom.
+		return -1
 	}
 }
 
@@ -230,4 +245,15 @@ func (a Address) Clone() Address {
 		str:   a.str,
 		aType: a.aType,
 	}
+}
+func (a Address) Compare(other Address) int {
+	if a.aType != other.aType {
+		return a.aType.Weight() - other.aType.Weight()
+	}
+	aWeight := a.Weight()
+	oWeight := other.Weight()
+	if aWeight != oWeight {
+		return aWeight - oWeight
+	}
+	return bytes.Compare(a.ipNet.IP, other.ipNet.IP)
 }

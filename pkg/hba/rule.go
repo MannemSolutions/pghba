@@ -132,6 +132,9 @@ func (r Rule) Compare(other Line) (comparison int) {
 	if comparison = r.user.Compare(o.user); comparison != 0 {
 		return comparison
 	}
+	if comparison = r.address.Compare(o.address); comparison != 0 {
+		return comparison
+	}
 	return 0
 }
 
@@ -181,9 +184,6 @@ func (r Rule) SortByRowNum(l Line) (less bool) {
 	}
 	return r.Compare(l) < 0
 }
-
-
-
 
 func (r *Rule) SetRowNum(rowNum int) {
 	r.rowNum = rowNum

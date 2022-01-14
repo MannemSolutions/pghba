@@ -53,7 +53,7 @@ func init() {
 
 	rootCmd.PersistentFlags().CountP("verbose", "v",
 		`Be more verbose in the output.`)
-	bindArgument("verbose", []string{"PGHBAVERBOSE"}, "100")
+	bindArgument("verbose", []string{"PGHBAVERBOSE"}, "0")
 
 	rootCmd.PersistentFlags().StringP("cfgFile", "c", "", "config file (default is $HOME/.pghba.yaml)")
 	bindArgument("cfgFile", []string{"PGHBACFG"}, filepath.Join(currentUser.HomeDir, ".pghba.yaml"))
