@@ -13,7 +13,7 @@ run: build
 	./pghba
 
 clean:
-	rm ./pghba
+	rm -f ./pghba
 
 fmt:
 	gofmt -w .
