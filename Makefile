@@ -1,7 +1,7 @@
 all: inttest
 
 build:
-	go build -o ./pghba  ./main
+	go build -o ./pghba ./cmd/pghba
 
 debug:
 	dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./main -- add -a md5 -t '(local|hostssl)' -d '(db_[a-e])' -s '(127.0.0.1|192.168.2.13)' -U '(postgres|test{1..5})'
