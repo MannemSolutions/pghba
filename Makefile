@@ -1,18 +1,24 @@
-all: inttest
+all: clean build
 
-build:
+pghba:
+	./set_version.sh
 	go build -o ./pghba ./cmd/pghba
 
-debug:
-	dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./main -- add -a md5 -t '(local|hostssl)' -d '(db_[a-e])' -s '(127.0.0.1|192.168.2.13)' -U '(postgres|test{1..5})'
+build: pghba
 
-run:
+debug:
+	dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./cmd/pghba -- add -a md5 -t '(local|hostssl)' -d '(db_[a-e])' -s '(127.0.0.1|192.168.2.13)' -U '(postgres|test{1..5})'
+
+run: build
 	./pghba
+
+clean:
+	rm ./pghba
 
 fmt:
 	gofmt -w .
 
-test: unittest sec lint
+test: unittest sec lint functional_test
 
 sec:
 	gosec ./...
@@ -21,5 +27,7 @@ lint:
 	golangci-lint run
 
 unittest:
+	go test ./...
+
+functional_test:
 	./test.sh
-	find . -name '*_test.go' | while read f; do dirname $$f; done | sort -u | while read d; do go test $$d; done
