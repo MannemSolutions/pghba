@@ -2,8 +2,9 @@ package gnrtr
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGnrtrLoopSub(t *testing.T) {

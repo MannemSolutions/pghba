@@ -70,8 +70,8 @@ func NewGnrtr(s string) (g *Gnrtr) {
 
 func (g Gnrtr) clone() subGnrtr {
 	clone := &Gnrtr{
-		index: g.index,
-		currentRaw:   g.currentRaw,
+		index:      g.index,
+		currentRaw: g.currentRaw,
 	}
 	for _, sg := range g.allGnrtrs {
 		clone.allGnrtrs = append(clone.allGnrtrs, sg.clone())
@@ -114,8 +114,9 @@ func (g Gnrtr) Current() string {
 
 func (g Gnrtr) String() (s string) {
 	s = g.currentRaw
-	for i, sg := range g.subGnrtrs() {
-		s = strings.Replace(s, fmt.Sprintf("${%d}", i), sg.String(), 1)
+	for i, sg := range g.allGnrtrs {
+		sgs := sg.String()
+		s = strings.Replace(s, fmt.Sprintf("${%d}", i), sgs, 1)
 	}
 	return s
 }
