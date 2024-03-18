@@ -211,7 +211,7 @@ func (a *Address) SetMask(mask string) error {
 	}
 	if size >= 0 {
 		a.ipNet = &net.IPNet{
-			IP: a.ip,
+			IP:   a.ip,
 			Mask: net.CIDRMask(size, size),
 		}
 		return nil
@@ -229,7 +229,7 @@ func (a *Address) SetMask(mask string) error {
 			parts[i] = byte(b)
 		}
 		a.ipNet = &net.IPNet{
-			IP: a.ip,
+			IP:   a.ip,
 			Mask: net.IPMask{parts[0], parts[1], parts[2], parts[3]},
 		}
 		return nil
@@ -265,7 +265,7 @@ func (a Address) Contains(other Address) bool {
 		// with delete command, hostname can be set to "" which means all hosts
 		return a.str == "" || a.aType == other.aType && a.str == other.str
 	case AddressTypeDomain:
-		return (other.aType == other.aType || other.aType == AddressTypeHostName) && strings.HasSuffix(other.str, a.str)
+		return (other.aType == AddressTypeDomain || other.aType == AddressTypeHostName) && strings.HasSuffix(other.str, a.str)
 	case AddressTypeAll:
 		return a.aType == other.aType
 	}
