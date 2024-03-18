@@ -2,6 +2,7 @@ package hba
 
 import (
 	"fmt"
+
 	"github.com/mannemsolutions/pghba/pkg/gnrtr"
 )
 
@@ -11,7 +12,7 @@ And it can do smart things on a list of rules.
 */
 
 type Rules struct {
-	rules     []Rule
+	rules []Rule
 }
 
 func NewRules(rowNum int, connTypes string, databases string, users string, addresses string, mask string, method string, options string) (*Rules, error) {
@@ -34,11 +35,9 @@ func NewRules(rowNum int, connTypes string, databases string, users string, addr
 }
 
 func (rs Rules) Clone() (clone *Rules) {
-	clone = &Rules{}
-	for _, rule := range rs.rules {
-		clone.rules = append(clone.rules, rule)
+	return &Rules{
+		rules: append([]Rule{}, rs.rules...),
 	}
-	return clone
 }
 
 func (rs *Rules) Merge(from Rules) {
@@ -64,7 +63,7 @@ func (rs *Rules) SmartSort() {
 	var rule *Rule
 	var next *Rule
 	for {
-		if i >= len(rs.rules) - 1 {
+		if i >= len(rs.rules)-1 {
 			break
 		}
 		rule = &rs.rules[i]
@@ -75,7 +74,7 @@ func (rs *Rules) SmartSort() {
 		} else {
 			rule.rowNum = i
 			// No duplicate, next...
-			i+=1
+			i += 1
 		}
 	}
 }
@@ -113,4 +112,3 @@ func (rs *Rules) Remove(r Rule) (found bool) {
 		}
 	}
 }
-
