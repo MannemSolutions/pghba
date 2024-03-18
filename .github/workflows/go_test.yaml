@@ -1,0 +1,16 @@
+name: go test
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+
+      - name: Test
+        uses: robherley/go-test-action@v0.2.0

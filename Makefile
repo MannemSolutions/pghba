@@ -1,23 +1,33 @@
-all: inttest
+all: clean build
 
-build:
-	go build ./cmd/pghba
+pghba:
+	./set_version.sh
+	go build -o ./pghba ./cmd/pghba
+
+build: pghba
 
 debug:
-	~/go/bin/dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./cmd/pghba
+	dlv debug --headless --listen=:2345 --api-version=2 --accept-multiclient ./cmd/pghba -- add -a md5 -t '(local|hostssl)' -d '(db_[a-e])' -s '(127.0.0.1|192.168.2.13)' -U '(postgres|test{1..5})'
 
-run:
+run: build
 	./pghba
+
+clean:
+	rm -f ./pghba
 
 fmt:
 	gofmt -w .
 
-test: sec lint
+test: unittest sec lint functional_test
 
 sec:
 	gosec ./...
+
 lint:
 	golangci-lint run
 
-inttest:
-	./docker-compose-tests.sh
+unittest:
+	go test ./...
+
+functional_test:
+	./test.sh
