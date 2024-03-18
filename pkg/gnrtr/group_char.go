@@ -38,7 +38,6 @@ func (g GroupChars) allStartChars() (all []string) {
 }
 
 var (
-	partsIsDone     = fmt.Errorf("no more parts to split")
 	groupStartToEnd = GroupChars{
 		curlyStart:  curlyEnd,
 		roundStart:  roundEnd,
@@ -56,7 +55,7 @@ func (groupStart GroupChar) Parts(s string) (prefix string, comprehension string
 		groupStart, strings.Join(groupStartToEnd.allChars(), "\\"), groupEnd))
 	matches := re.FindStringSubmatch(s)
 	if matches == nil {
-		err = partsIsDone
+		err = fmt.Errorf("no more parts to split")
 		return
 	}
 	fields := make(map[string]string)
