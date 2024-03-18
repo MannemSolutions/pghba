@@ -1,4 +1,4 @@
 .idea
 
-/pghba
-/pg_hba.conf
+/pghba*
+/pg_hba.*
