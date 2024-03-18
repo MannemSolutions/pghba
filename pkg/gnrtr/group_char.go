@@ -6,31 +6,31 @@ import (
 	"strings"
 )
 
-type groupChar string
+type GroupChar string
 
 const (
-	squareStart groupChar = "["
-	roundStart  groupChar = "("
-	curlyStart  groupChar = "{"
-	squareEnd   groupChar = "]"
-	roundEnd    groupChar = ")"
-	curlyEnd    groupChar = "}"
+	squareStart GroupChar = "["
+	roundStart  GroupChar = "("
+	curlyStart  GroupChar = "{"
+	squareEnd   GroupChar = "]"
+	roundEnd    GroupChar = ")"
+	curlyEnd    GroupChar = "}"
 )
 
-type groupChars map[groupChar]groupChar
+type GroupChars map[GroupChar]GroupChar
 
-func (g groupChars) allChars() []string {
+func (g GroupChars) allChars() []string {
 	return append(g.allStartChars(), g.allEndChars()...)
 }
 
-func (g groupChars) allEndChars() (all []string) {
+func (g GroupChars) allEndChars() (all []string) {
 	for _, end := range g {
 		all = append(all, string(end))
 	}
 	return all
 }
 
-func (g groupChars) allStartChars() (all []string) {
+func (g GroupChars) allStartChars() (all []string) {
 	for start := range g {
 		all = append(all, string(start))
 	}
@@ -39,14 +39,14 @@ func (g groupChars) allStartChars() (all []string) {
 
 var (
 	partsIsDone     = fmt.Errorf("no more parts to split")
-	groupStartToEnd = groupChars{
+	groupStartToEnd = GroupChars{
 		curlyStart:  curlyEnd,
 		roundStart:  roundEnd,
 		squareStart: squareEnd,
 	}
 )
 
-func (groupStart groupChar) Parts(s string) (prefix string, comprehension string, postfix string, err error) {
+func (groupStart GroupChar) Parts(s string) (prefix string, comprehension string, postfix string, err error) {
 	var exists bool
 	groupEnd, exists := groupStartToEnd[groupStart]
 	if !exists {
