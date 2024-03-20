@@ -19,8 +19,8 @@ jobs:
           - amd64
           - arm64
         exclude:
-          - goarch: "386"
-            goos: darwin
+          - goarch: arm64
+            goos: windows
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
