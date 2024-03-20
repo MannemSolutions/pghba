@@ -55,10 +55,10 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
       - name: "Build"
         run: |
-          docker build -t pgsectest .
+          docker build -t pghba .
       - name: "tag and push to ghcr.io"
         run: |
           for TAG in latest ${{ github.ref_name }}; do
-            docker tag pgsectest ghcr.io/mannemsolutions/pgsectest:${TAG}
-            docker push ghcr.io/mannemsolutions/pgsectest:${TAG}
+            docker tag pghba ghcr.io/mannemsolutions/pghba:${TAG}
+            docker push ghcr.io/mannemsolutions/pghba:${TAG}
           done
