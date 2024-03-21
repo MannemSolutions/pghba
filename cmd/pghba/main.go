@@ -1,5 +1,6 @@
 package main
 
+// cobra and viper are used to create a uniform interface on CLI and configuration file.
 import (
 	"fmt"
 	"os"
@@ -31,6 +32,10 @@ func requireSubcommand(cmd *cobra.Command, args []string) error {
 	return fmt.Errorf("missing command '%[1]s COMMAND'\nTry '%[1]s --help' for more information", cmd.CommandPath())
 }
 
+// This function returns either a validly formed command for main() to run, or
+// an error. Initializes a cobra command structure using the settings from the
+// configuration file. Override the default location with -c,--cfgFile).
+// Override the target pg_hba.conf file with -f, --hbaFile
 func createApp() *cobra.Command {
 
 	cobra.OnInitialize(initConfig)
@@ -75,6 +80,7 @@ Complete documentation is available at https://github.com/mannemsolutions/pghba/
 	return rootCmd
 }
 
+// Execute the fully formed pghba command and handle any errors.
 func main() {
 	initLogger()
 	rootCmd := createApp()
@@ -85,6 +91,9 @@ func main() {
 	log.Info("finished")
 }
 
+// Read settings as key value pairs from the ".pghba" config file in the home directory.
+// This is (obscurely) referenced from the "createApp" function above.
+// TODO would this be clearer if moved above createApp?
 func initConfig() {
 	if cfgFile != "" {
 		// Use config file from the flag.

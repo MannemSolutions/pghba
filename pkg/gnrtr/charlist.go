@@ -5,32 +5,41 @@ import (
 	"strings"
 )
 
+// charList is an array of byte 'list' and has a stored index of type int.
+// charList stores the list of characters to use for expansion in the format
+// from regular expressions. This includes ranges. It is described by the
+// regular expression `\[([^]]+)]`
+// TODO Question: does the *regex.Regexp type automagically have a .String()
+// method? Answer: it does! (should have looked at the link to the definition
+// popup. Still, why don't you have to import the regex package here?
 type charList struct {
 	list  []byte
 	index int
 }
 
+// Returns a new charList 'cl' containing all the characters described by
+// string 's' as bytes in an array
 func newCharList(s string) (cl *charList, err error) {
 	match := reCharList.FindStringSubmatch(s)
-	if match == nil {
+	if match == nil { // verify input first
 		return nil, fmt.Errorf("invalid input to newCharList (should have form %s)", reCharList.String())
 	}
 	if strings.HasPrefix(match[1], "^") {
 		return nil, fmt.Errorf("cannot make an iterator of a negative character list (starting with ^)")
 	}
-	cl = &charList{
+	cl = &charList{ // Initialize the charList
 		index: 0,
 	}
-	chars := match[1]
+	chars := match[1] // TODO Question: should we be looping through any further matches?
 	for i := 0; i < len(chars); i++ {
 		if i < len(chars)-1 {
-			if chars[i+1] == '-' {
+			if chars[i+1] == '-' { // detect character ranges
 				start := chars[i]
 				end := chars[i+2]
 				if end < start {
 					return nil, fmt.Errorf("could not parse %s, %s should be before %s", s, string(start),
 						string(end))
-				}
+				} // add each individual character in the range to the character list
 				for char := start; char <= end; char++ {
 					cl.list = append(cl.list, char)
 				}
@@ -42,6 +51,8 @@ func newCharList(s string) (cl *charList, err error) {
 	}
 	return cl, nil
 }
+
+// All implementations of methods for charList follow below and are self-describing afaics
 
 func (cl charList) clone() subGnrtr {
 	return &charList{

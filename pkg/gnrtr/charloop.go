@@ -4,12 +4,17 @@ import (
 	"fmt"
 )
 
+// A charLoop contains a byte 'begin' a byte 'end' and index.
+// TODO why is this different from the charlist? The index is byte instead of
+// index. Index isn't set when initializing.
 type charLoop struct {
 	begin byte
 	index byte
 	end   byte
 }
 
+// Returns a new CharLoop 'l' by matching string 's' against regexp `{(\S)..(\S)}`
+// TODO can't there be multiple matches here, too?
 func newCharLoop(s string) (l *charLoop, err error) {
 	match := reCharLoop.FindStringSubmatch(s)
 	if match == nil {
@@ -26,6 +31,8 @@ func newCharLoop(s string) (l *charLoop, err error) {
 	l.index = l.begin
 	return l, nil
 }
+
+// All implementations of methods for charList follow below and are self-describing afaics
 
 func (cl charLoop) clone() subGnrtr {
 	return &charLoop{

@@ -29,6 +29,8 @@ func argsToRules(namespace string) *hba.Rules {
 	}
 	return rules
 }
+
+// bindArgument
 func bindArgument(ns string, key string, cmd *cobra.Command, envVars []string, defaultValue string) {
 	var err error
 	var viperKey string
