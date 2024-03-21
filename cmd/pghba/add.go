@@ -1,5 +1,7 @@
 package main
 
+// Implementation of the "add" sub command.
+
 import (
 	"os/user"
 

@@ -1,5 +1,7 @@
 package main
 
+// set up and initalize the logger to output sugarred log concurrently safely.
+
 import (
 	"os"
 
