@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// Gnrtr holds the separate generator patterns as a slice of sub generators
 type Gnrtr struct {
 	index      int
 	current    string
@@ -15,6 +16,8 @@ type Gnrtr struct {
 	allGnrtrs  subGnrtrs
 }
 
+// Match each of the loop constructs' regular expressions against the string
+// 's', leaving any matches in the 'match' array.
 func NewGnrtr(s string) (g *Gnrtr) {
 	g = &Gnrtr{
 		currentRaw: s,
@@ -68,10 +71,11 @@ func NewGnrtr(s string) (g *Gnrtr) {
 	return g
 }
 
+// Returns a clone of by walking through all generators and adding them
 func (g Gnrtr) clone() subGnrtr {
 	clone := &Gnrtr{
-		index: g.index,
-		currentRaw:   g.currentRaw,
+		index:      g.index,
+		currentRaw: g.currentRaw,
 	}
 	for _, sg := range g.allGnrtrs {
 		clone.allGnrtrs = append(clone.allGnrtrs, sg.clone())

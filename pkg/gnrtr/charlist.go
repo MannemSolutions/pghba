@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// charList is an array of byte 'list' and has a stored index of type int.
+// charList is a slice of byte and has a stored index of type int.
 // charList stores the list of characters to use for expansion in the format
 // from regular expressions. This includes ranges. It is described by the
 // regular expression `\[([^]]+)]`
@@ -30,7 +30,7 @@ func newCharList(s string) (cl *charList, err error) {
 	cl = &charList{ // Initialize the charList
 		index: 0,
 	}
-	chars := match[1] // TODO Question: should we be looping through any further matches?
+	chars := match[1] // This selects the first substring match
 	for i := 0; i < len(chars); i++ {
 		if i < len(chars)-1 {
 			if chars[i+1] == '-' { // detect character ranges

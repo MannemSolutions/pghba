@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+// AddressType helps discern between the different concepts of 'Address' as
+// pg_hba.conf defines them.
+// See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
 type AddressType int
 
 const (
@@ -22,6 +25,9 @@ const (
 	AddressTypeSameNet
 )
 
+// this looks like an interface method implementation?
+// TODO I have no idea what 'weight' actually should be from this, either as a
+// concept or as to what is actually taken into account.
 func (at AddressType) Weight() int {
 	if at == AddressTypeUnknown {
 		return int(AddressTypeSameNet) - int(AddressTypeUnknown) + 1
@@ -56,6 +62,8 @@ func aTypeFromStr(addr string) AddressType {
 	return AddressTypeHostName
 }
 
+// Address holds a string with the 'raw' address, an IP or IP network derived
+// from it (optionally) and the address type accordig to pg_hba standards.
 type Address struct {
 	ip    net.IP
 	ipNet *net.IPNet
@@ -63,8 +71,10 @@ type Address struct {
 	aType AddressType
 }
 
+// An array of Addresses
 type Addresses []Address
 
+// NewAddress takes a string 'addr' and returns an Address
 func NewAddress(addr string) (a Address, err error) {
 	a.str = addr
 	if strings.Contains(addr, "/") {
@@ -211,7 +221,7 @@ func (a *Address) SetMask(mask string) error {
 	}
 	if size >= 0 {
 		a.ipNet = &net.IPNet{
-			IP: a.ip,
+			IP:   a.ip,
 			Mask: net.CIDRMask(size, size),
 		}
 		return nil
@@ -229,7 +239,7 @@ func (a *Address) SetMask(mask string) error {
 			parts[i] = byte(b)
 		}
 		a.ipNet = &net.IPNet{
-			IP: a.ip,
+			IP:   a.ip,
 			Mask: net.IPMask{parts[0], parts[1], parts[2], parts[3]},
 		}
 		return nil
