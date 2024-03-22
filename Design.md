@@ -64,7 +64,8 @@ and object oriented.
 
 The main datastructures center around the concept of a pg_hba.conf line
 containing the rules and a 'Generator' that describes a pattern to use to
-generate lines according to the patterns.
+generate lines according to the patterns. The patterns are defined as regular
+expressions and described in pkg/gnrtr/main.go.
 
 
 ### Why Go?

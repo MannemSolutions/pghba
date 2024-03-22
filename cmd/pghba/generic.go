@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+// getArg returns the value for 'key' in namespace 'ns'
+// A namespace is related to a sub command, allowing for options per sub-command
 func getArg(ns, key string) string {
 	return viper.GetString(fmt.Sprintf("%s.%s", ns, key))
 }
