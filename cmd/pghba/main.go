@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	cfgFile string
+	cfgFile string	// TODO I don't see how this is set anywhere
 )
 
 // requireSubcommand returns an error if no sub command is provided
