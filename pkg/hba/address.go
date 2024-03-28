@@ -71,8 +71,9 @@ type Address struct {
 	aType AddressType
 }
 
-// An array of Addresses
+// A slice of Addresses
 type Addresses []Address
+
 
 // NewAddress takes a string 'addr' and returns an Address
 func NewAddress(addr string) (a Address, err error) {

@@ -60,6 +60,14 @@ which is Cobra. This choice has led to the structure of the code and the
 programming style which is as of writing an amalgam of procedural, functional
 and object oriented.
 
+## Architecture
+
+The code is split up in several parts:
+- The command line parser
+- A single file internal package for the versioning
+- The generator package creates the expansions of fields
+- The pg_hba.conf file is described and instrumented in the hba package
+
 ## Data structures
 
 The main datastructures center around the concept of a pg_hba.conf line
