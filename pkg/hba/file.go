@@ -19,6 +19,11 @@ func NewFile(path string) File {
 	}
 }
 
+// TODO (GS) unclear to me why. Shouldn't empties and comments be kept?
+// Not as rules but as lines. Maybe we could be 'smart' about keeping
+// comments neer the lines they belong to.
+// One more thing: line continuation should be handled here.
+
 // Renumber all rules in the .lines sub value.
 // Not all lines are rules, and we want to number all rules consistently.
 // And know how many rules are there in the lines.
@@ -34,6 +39,7 @@ func (f *File) renumberRules() {
 	}
 }
 
+// Open a pg_hba.conf file for reading
 func (f *File) Read() error {
 	var commentBlock Comments
 	file, err := os.Open(f.path)
@@ -90,7 +96,7 @@ func (f *File) DeleteRule(r Rule) (found bool) {
 		}
 		if rule, isRule := f.lines[i].(Rule); !isRule {
 			log.Debugf("Not a rule %s", f.lines[i].String())
-			i+=1
+			i += 1
 			continue
 		} else if r.Contains(rule) {
 			log.Debugf("Removing rule %s", rule.String())
@@ -99,7 +105,7 @@ func (f *File) DeleteRule(r Rule) (found bool) {
 			f.dirty = true
 			f.numRules -= 1
 		} else {
-			i+=1
+			i += 1
 			log.Debugf("Leaving rule %s", rule.String())
 		}
 	}

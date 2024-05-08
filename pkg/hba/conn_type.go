@@ -13,6 +13,7 @@ const (
 	ConnTypeUnknown
 )
 
+// Map pg_hba.conf string keys for the connection to typeConnType
 var (
 	toConnType = map[string]ConnType{
 		"local":        ConnTypeLocal,
@@ -26,7 +27,7 @@ var (
 	allConnTypes []string
 )
 
-func AllConnTypes() (all []string){
+func AllConnTypes() (all []string) {
 	if len(allConnTypes) == 0 {
 		for ct := range toConnType {
 			allConnTypes = append(allConnTypes, ct)
