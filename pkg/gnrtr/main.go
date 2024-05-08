@@ -43,6 +43,17 @@ The following is implemented:
 
 */
 
+/*
+	  These variables contain a regular expression to describe four types of
+	  expansion pattern:
+		* array. Example: (item1|item2|item3) (like in regexp)
+		* charlist. Example: [a-z_,|] (like in regexp)
+		* charloop. Example: {a..z} (like in bash)
+		* intloop. Example: {1..99} (like in bash)
+
+	  The 'multiple' variants ending s describe the regexp for one item where the
+	  singular variants describe a single instance of such a pattern.
+*/
 var (
 	reIntLoops     = regexp.MustCompile(`{(\d+)..(\d+)}`)
 	reIntLoop      = regexp.MustCompile(fmt.Sprintf("^%s$", reIntLoops.String()))
