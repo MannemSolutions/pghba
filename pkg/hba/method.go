@@ -21,6 +21,8 @@ const (
 )
 
 var (
+	// toMethod contains a map from all defined authentication methods as string to their individual type.
+	// This is done using a variable because maps can't be constants in Go.
 	toMethod = map[string]Method{
 		"cert":          MethodCert,
 		"gss":           MethodGss,
@@ -37,6 +39,7 @@ var (
 		"sspi":          MethodSspi,
 		"trust":         MethodTrust,
 	}
+	// fromMethod contains a map from defined authentication methods to their string representation.
 	fromMethod = map[Method]string{}
 )
 
@@ -49,6 +52,8 @@ var (
 //	return keys
 //}
 
+// Based on whether str maps to something in the toMethod variable, NewMethod returns the value belonging to key str,
+// otherwise return MethodUnknown
 func NewMethod(str string) (m Method) {
 	if m, exists := toMethod[str]; exists {
 		return m
@@ -56,6 +61,9 @@ func NewMethod(str string) (m Method) {
 	return MethodUnknown
 }
 
+// If fromMethod is uninitialized, derive it from toMethod.
+// If Method m maps to a value, return it as string. Otherwise return "unknown_method"
+// TODO Q: it seems strange to mix OO with normal functions?
 func (m Method) String() string {
 	if len(fromMethod) == 0 {
 		fromMethod = make(map[Method]string)

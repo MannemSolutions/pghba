@@ -49,6 +49,7 @@ func NewGnrtr(s string) (g *Gnrtr) {
 		g.currentRaw = strings.Replace(g.currentRaw, match[0], placeholder, 1)
 		g.allGnrtrs = append(g.allGnrtrs, sg)
 	}
+
 	// We do this in a loop, because array definitions might have array definitions inside them
 	// The child arrays would be parsed and replaced on earlier passes, and parent arrays on later passes
 	for {

@@ -1,3 +1,5 @@
+// hba provides a programmatic interface to the rules described by the PostgreSQL pg_hba.conf file using abstractions
+// for connection types, databases, users, addresses, authentication methods and complete rules.
 package hba
 
 import (

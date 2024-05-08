@@ -16,6 +16,7 @@ type Line interface {
 
 type EmptyLine string
 
+// TODO I don't get the regex: \S matches any non-space character. Isn't the logic inverted here?
 func NewEmptyLine(line string) (EmptyLine, error) {
 	re := regexp.MustCompile(`^\S*$`)
 	if re.MatchString(line) {
@@ -49,4 +50,3 @@ func (e EmptyLine) RowNum() int {
 }
 
 type Lines []Line
-

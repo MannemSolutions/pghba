@@ -14,6 +14,7 @@ import (
 // See https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
 type AddressType int
 
+// Define all AddressTypes that pg_hba.conf specifies and the AddressTypeUnknown.
 const (
 	AddressTypeUnknown AddressType = iota
 	AddressTypeIpV4
@@ -25,9 +26,8 @@ const (
 	AddressTypeSameNet
 )
 
-// this looks like an interface method implementation?
-// TODO I have no idea what 'weight' actually should be from this, either as a
-// concept or as to what is actually taken into account.
+// Return the relative Weight of the AddressType for a rule by comparing it arithmatically against the lowest weight
+// AddressType.
 func (at AddressType) Weight() int {
 	if at == AddressTypeUnknown {
 		return int(AddressTypeSameNet) - int(AddressTypeUnknown) + 1
@@ -36,6 +36,8 @@ func (at AddressType) Weight() int {
 	}
 }
 
+// Determine and return the IP address family type (AddressTypeIPV4 or AddressTypeIPV6) or AddressTypeUknown when nil.
+// TODO: I believe this should be replaced with the function from the native net/netIP package
 func aTypeFromIP(ip net.IP) AddressType {
 	s := ip.String()
 	if s == "<nil>" {
@@ -47,6 +49,12 @@ func aTypeFromIP(ip net.IP) AddressType {
 	return AddressTypeIpV4
 }
 
+// Determine and return the pg_hba AddressType from the string 'addr'.
+// This function implicitly assumes that 'addr' is not an IP type address.
+// TODO: This determination may be too naive for all real-world scenarios and additionally, could be redundant because:
+// 'all' is the same as 0.0.0.0/0
+// 'samehost' is the same as w.x.y.z/32
+// 'samenet' is (roughly) the same as host/netmask for referenced network.
 func aTypeFromStr(addr string) AddressType {
 	switch addr {
 	case "all":
@@ -74,8 +82,10 @@ type Address struct {
 // A slice of Addresses
 type Addresses []Address
 
-
-// NewAddress takes a string 'addr' and returns an Address
+// NewAddress returns a pg_hba Address from a string 'addr'
+// 1) regexes are not allowed for the address field so anything with a '/' should be an IP with a CIDR netmask
+// 2) So parse it and if it returns anything other than 'nil', assume it is an IP
+// 3) Else parse it as a label, host or domain.
 func NewAddress(addr string) (a Address, err error) {
 	a.str = addr
 	if strings.Contains(addr, "/") {
@@ -99,6 +109,8 @@ func NewAddress(addr string) (a Address, err error) {
 	return a, nil
 }
 
+// TODO I'm uncertain as to why you would want to accept subnetmasks that have leading zeros
+// This function returns the length of the significant part of a dotted quad net mask.
 func sizeFromNet(m net.IPMask) (uint, error) {
 	// net.IPMask.Size() seems somewhat broken as in:
 	// If the mask is not in the canonical form--ones followed by zeros--then Size returns 0, 0.
@@ -127,6 +139,8 @@ func sizeFromNet(m net.IPMask) (uint, error) {
 	return zeroes, nil
 }
 
+// NetworkSize returns the length of the bitmask of Address 'a' or the host mask for the associated IP type if none is
+// specified. Assumes 'a' is an IPv4 or IPv6 address. Returns an error if that assumption fails.
 func (a Address) NetworkSize() (uint, error) {
 	switch a.aType {
 	case AddressTypeIpV4, AddressTypeIpV6:
@@ -143,6 +157,10 @@ func (a Address) NetworkSize() (uint, error) {
 	}
 }
 
+// Return the 'Weight' for the Address 'a' based on the netmask length.
+// The longer the netmask, the more specific an address is, the higher the weight.
+// TODO this is a different type of 'weight' than that for the AddressType. I believe a better term would be
+// Specificity.
 func (a Address) Weight() int {
 	switch a.aType {
 	case AddressTypeIpV4, AddressTypeIpV6:
@@ -168,6 +186,9 @@ func (a Address) Weight() int {
 	}
 }
 
+// Return a string representation of Address 'a'
+// TODO unclear to me why you would want to have non-canonical addresses and their mask separately for our purposes,
+// and in a different format to boot.
 func (a Address) String() string {
 	switch a.aType {
 	case AddressTypeIpV4, AddressTypeIpV6:
@@ -190,24 +211,28 @@ func (a Address) String() string {
 	}
 }
 
+// The SetMask method on Address sets ipNet on 'a'
 func (a *Address) SetMask(mask string) error {
 	if a.aType != AddressTypeIpV4 && a.aType != AddressTypeIpV6 {
+		// TODO shouldn't we simply reject anything but a valid address type instead of continuing if mask is unset?
+		// (In other words: can this be applied to an Address that isn't an IP?)
 		if mask == "" {
 			return nil
 		}
-		return fmt.Errorf("cannot set mask on something other then ipv4 or ipv6 mask")
+		return fmt.Errorf("cannot set mask on something other then ipv4 or ipv6 address")
 	}
 	if a.ip.IsUnspecified() {
 		return fmt.Errorf("cannot apply mask %s to address that is not ip %s", mask, a.str)
 	}
 	var size = -1
-	// use ParseIP to find ou the bytes
+	// If no mask is defined, use default value for full host mask for each IP type.
 	if mask == "" {
 		if a.aType == AddressTypeIpV4 {
 			size = 32
 		} else {
 			size = 128
 		}
+		// If 'mask' was specified, make sure the mask size is smaller than the maximum allowed for each IP type.
 	} else if i, err := strconv.Atoi(mask); err != nil {
 		var maxSize int
 		if a.aType == AddressTypeIpV4 {
@@ -222,7 +247,8 @@ func (a *Address) SetMask(mask string) error {
 	}
 	if size >= 0 {
 		a.ipNet = &net.IPNet{
-			IP:   a.ip,
+			IP: a.ip,
+			// TODO is this correct? Shouldn't the second value be 'maxSize'?
 			Mask: net.CIDRMask(size, size),
 		}
 		return nil
@@ -248,10 +274,12 @@ func (a *Address) SetMask(mask string) error {
 	return fmt.Errorf("mask %s is not a valid netmask", mask)
 }
 
+// Returns true if Address 'a' has an AddressTypeUnknown
 func (a Address) Unset() bool {
 	return a.aType == AddressTypeUnknown
 }
 
+// Return a clone of Address 'a'
 func (a Address) Clone() Address {
 	return Address{
 		ip:    a.ip,
@@ -260,10 +288,14 @@ func (a Address) Clone() Address {
 		aType: a.aType,
 	}
 }
+
+// Returns true if the 'other' address is contained within the 'a' Address specification
 func (a Address) Contains(other Address) bool {
 	switch a.aType {
+	// if 'a' is AddressTypeUnkown, return true if 'other' is also AddressType unknown. Otherwise return false.
 	case AddressTypeUnknown:
 		return a.aType == other.aType
+		// if both are the same IP type, compare logically based on netmask.
 	case AddressTypeIpV4, AddressTypeIpV6:
 		if a.aType == other.aType {
 			return a.ipNet.Contains(other.ipNet.IP)
@@ -277,12 +309,16 @@ func (a Address) Contains(other Address) bool {
 		return a.str == "" || a.aType == other.aType && a.str == other.str
 	case AddressTypeDomain:
 		return (other.aType == AddressTypeDomain || other.aType == AddressTypeHostName) && strings.HasSuffix(other.str, a.str)
+		// TODO isn't everything contained within 'all'?
 	case AddressTypeAll:
 		return a.aType == other.aType
 	}
 	return false
 }
 
+// Return the relative Weight of one addressess' type against another.
+// TODO this naming is confusing to me. It is unclear that the address type is being compared here in terms of weight
+// as meant in AddressTypeWeight.
 func (a Address) Compare(other Address) int {
 	if a.aType == AddressTypeUnknown || other.aType == AddressTypeUnknown {
 		// For delete command. If it is an unknown address type, make it equal to all addresses

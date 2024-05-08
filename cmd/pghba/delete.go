@@ -10,15 +10,17 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// TODO I just realized that deleting is very difficult to get right if done contextually instead
+// of literally.
 func deleteCommand() *cobra.Command {
 	deleteCmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete one or more rules from pg_hba.conf",
 		Long: `Use the delete command to remove rules from a pg_hba.conf file.
-			   Note that the original rules will be preserved as good as possible,
-						 including comments. The location in the file can be automatically added
-						 before the line with a bigger span, or can be manually set.
-						 Alternatively all lines can be automatically sorted.`,
+			   Note that the original rules will be preserved as much as possible,
+				including comments. The location in the file can be automatically added
+				before the line with a bigger span, or can be manually set.
+				Alternatively all lines can be automatically sorted.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if viper.GetInt("verbose") > 0 {
 				atom.SetLevel(zapcore.DebugLevel)

@@ -5,23 +5,32 @@ import (
 	"strings"
 )
 
+// Rule holds a parsed or newly created pg_hba.conf rule.
 type Rule struct {
-	rowNum   int
-	comments Comments
-	str      string
-	connType ConnType
-	database Database
-	user     User
-	address  Address
-	method   Method
-	options  Options
+	rowNum   int      // Unique row number across all rules
+	comments Comments // Line comments
+	str      string   // The current string being parsed
+	connType ConnType // Connection type for the rule
+	database Database // The databases affected by the rule
+	user     User     // The users affected by the rule
+	address  Address  // The addresses (dis)allowed access by the rule
+	method   Method   // The authentication method for the rule
+	options  Options  // Authentication options
 }
 
-func NewRule(rowNum int, connType string, database string, user string, address string, mask string, method string, options string) (r Rule, err error) {
+// Create a new rule programmatically by providing the individual values for the relevant fields.
+func NewRule(rowNum int,
+	connType string,
+	database string,
+	user string,
+	address string,
+	mask string,
+	method string,
+	options string) (r Rule, err error) {
 	var addr Address
 	ct := NewConnType(connType)
 	mtd := NewMethod(method)
-	db := Database(database)
+	db := Database(database) // TODO this is a method being used as a function?
 	usr := User(user)
 	if ct != ConnTypeLocal && ct != ConnTypeUnknown {
 		addr, err = NewAddress(address)
@@ -49,6 +58,7 @@ func NewRule(rowNum int, connType string, database string, user string, address 
 	}, nil
 }
 
+// Create a new rule structure from an existing line in a pg_hba.conf file.
 func NewRuleFromLine(line string) (Rule, error) {
 	var address, db string
 	var r Rule
@@ -111,12 +121,15 @@ func NewRuleFromLine(line string) (Rule, error) {
 	return r, nil
 }
 
+// Below the implementation of various methods against 'Rule'.
+
 func (r *Rule) PrependComments(comments Comments) {
 	// Counterintuitive, but basically we take the 'comments' argument as a start, and append all comments
 	// that where already in r.comments. We store the result in r.comments...
 	r.comments = append(comments, r.comments...)
 }
 
+// Check to see if one rule is contained in another rule.
 func (r Rule) Contains(other Rule) bool {
 	if r.database != "" && r.database.Compare(other.database) != 0 {
 		return false
@@ -135,8 +148,9 @@ func (r Rule) Contains(other Rule) bool {
 	return true
 }
 
+// Check if one rule
 func (r Rule) Compare(other Line) (comparison int) {
-	o, ok := other.(Rule)
+	o, ok := other.(Rule) // TODO I don't understand this construct
 	if !ok {
 		// We cannot compare rules with other line types
 		return 0
@@ -200,7 +214,7 @@ func (r Rule) Less(l Line) (less bool) {
 
 func (r Rule) SortByRowNum(l Line) (less bool) {
 	if r.rowNum != l.RowNum() {
-		return r.rowNum - l.RowNum() < 0
+		return r.rowNum-l.RowNum() < 0
 	}
 	return r.Compare(l) < 0
 }

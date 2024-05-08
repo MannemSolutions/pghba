@@ -23,7 +23,8 @@ produces certainly helps.)
 
 The answer to this issue could be to rewrite PostgreSQL to have a better way of
 providing these rules to the system, but this is somewhat complicated, to put
-it mildly.
+it mildly. That is not to say that it shouldn't be done and I sincerely hope
+other have ideas around this. For now we'll have to work with what is there.
 
 The alternative, chosen here, is to create a tool that helps with some of the
 less intuitive aspects of the file itself. The pghba tool does this by making
@@ -42,7 +43,8 @@ TODO Insert a 'man page' like description of the command line.
 ## What may have to change
 Currently this package uses the 'net' package for the network address type but
 the latest tech in this area is much better: 'net/netip' allows to more easily
-convert and compare IPv4 and IPv6 addresses, including masks.
+convert and compare IPv4 and IPv6 addresses, including masks. There's an issue
+for it on github.
 
 The project seems to have been cut in too many pieces and there is a mix of
 types, methods and functions in some others that may have to be redistributed.
@@ -95,3 +97,7 @@ may well be in place.
 
 On a personal note, this piece of software is giving me flash-backs to ye olde
 Sendmail.cf. (sorry!)
+
+## TODO
+The more elaborate authentication methods like Radius and Ldap aren't fully
+supported in the current code.

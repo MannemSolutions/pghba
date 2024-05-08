@@ -13,6 +13,7 @@ func newSplitter(str string) splitter {
 	return splitter{rest: str}
 }
 
+// TODO hoe zorg je er voor dat 'user error' zoals " binnen een veld opgelost worden?
 func (s *splitter) Next() (string, error) {
 	re := regexp.MustCompile(`^\s*(?P<part>([^"\t ]+|"[^"\t ]*"))\s*(?P<rest>.*)$`)
 	matches := re.FindStringSubmatch(s.rest)
